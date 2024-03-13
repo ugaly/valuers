@@ -10,6 +10,10 @@ export default class AuthService{
         return API.ax.get('billing/list/').catch(e=>console.log(e))
     }
 
+    static setBilling(data){
+        return API.ax.post('billing/create/bill',data).catch(e=>console.log(e))
+    }
+
     static getIndividual(){
         return API.ax.get('registration/read/list/individual').catch(e=>console.log(e))
     }
@@ -17,6 +21,8 @@ export default class AuthService{
     static getCompany(){
         return API.ax.get('registration/read/list/companies').catch(e=>console.log(e))
     }
+
+    
 
 
 

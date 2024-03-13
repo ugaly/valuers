@@ -27,11 +27,18 @@ export default class UserActions extends React.Component {
     });
   }
 
+  // handleLogout() {
+  //   sessionStorage.clear();
+  //   window.location.reload();
+  //   // alert("Logout Successful");
+  // }
+
   handleLogout() {
     sessionStorage.clear();
-    window.location.reload();
-    // alert("Logout Successful");
-  }
+    const baseUrl = window.location.origin;
+    const logoutUrl = `${baseUrl}/evrb`;
+    window.location.href = logoutUrl;
+}
 
   render() {
     return (

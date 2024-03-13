@@ -16,7 +16,6 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import { Badge } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CircularProgress from '@mui/material/CircularProgress';
 import { visuallyHidden } from '@mui/utils';
@@ -24,6 +23,11 @@ import TextField from '@mui/material/TextField';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Button from '@mui/material/Button';
 import CancelIcon from '@mui/icons-material/Cancel';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import AuthService from '../services/auth/auth_service';
 
 import Menu from '@mui/material/Menu';
@@ -46,7 +50,7 @@ import Slide from '@mui/material/Slide';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
-  });
+});
 
 function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, BillAmt, BillDesc) {
   return { id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, BillAmt, BillDesc };
@@ -210,17 +214,17 @@ export default function IndividualsTable() {
 
 
 
-    const [openConfirm, setOpenConfirm] = React.useState(false);
-  
-    const handleClickOpenConfirm = (e) => {
-      e.stopPropagation();
-      handleClose();
-      setOpenConfirm(true);
-    };
-  
-    const handleCloseConfirm = () => {
-      setOpenConfirm(false);
-    };
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+
+  const handleClickOpenConfirm = (e) => {
+    e.stopPropagation();
+    handleClose();
+    setOpenConfirm(true);
+  };
+
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
+  };
 
   return (
     <Paper>
@@ -325,7 +329,7 @@ export default function IndividualsTable() {
                       <IconButton onClick={handleClick1}>
                         <MoreVertIcon />
                       </IconButton>
-                      <Menu
+                      {/* <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
@@ -333,6 +337,32 @@ export default function IndividualsTable() {
                         <MenuItem onClick={(e) => {e.stopPropagation(); handleClickOpenConfirm(e);}}>Delete</MenuItem>
                         <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>Edit</MenuItem>
                         <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>View</MenuItem>
+                      </Menu> */}
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                      >
+                       
+                        <MenuItem onClick={(e) => { e.stopPropagation();   handleClose(); handleClickOpen(); }}>
+                          <ListItemIcon>
+                            <VisibilityIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText primary="View" />
+                        </MenuItem>
+                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                          <ListItemIcon>
+                            <EditIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText primary="Edit" />
+                        </MenuItem>
+                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpenConfirm(e); }}>
+                          <ListItemIcon>
+                            <DeleteIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText primary="Delete" />
+                        </MenuItem>
+                       
                       </Menu>
                     </TableCell>
                   </TableRow>
@@ -364,7 +394,7 @@ export default function IndividualsTable() {
 
 
 
-<Dialog
+      <Dialog
         fullScreen
         open={open}
         onClose={handleClose1}
@@ -388,7 +418,7 @@ export default function IndividualsTable() {
             </Button>
           </Toolbar>
         </AppBar>
-        
+
       </Dialog>
 
 
@@ -400,10 +430,10 @@ export default function IndividualsTable() {
         onClose={handleCloseConfirm}
         aria-describedby="alert-dialog-slide-description"
       >
-      <DialogTitle>{`Hello ${sessionStorage.getItem('username')}`}</DialogTitle>
+        <DialogTitle>{`Hello ${sessionStorage.getItem('username')}`}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-          Are you sure you want to delete this record from the database?
+            Are you sure you want to delete this record from the database?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

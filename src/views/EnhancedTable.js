@@ -32,9 +32,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 
 
+
 import Dialog from '@mui/material/Dialog';
+import { FormControl } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
+
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -66,7 +72,7 @@ function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, Bi
 
 const headCells = [
   { id: 'counter', label: '#' },
-  { id: 'billid', label: 'BillId' },
+  { id: 'billid', label: 'Bill_Id' },
   { id: 'pyrName', label: 'pyrName' },
   { id: 'pyrCellNum', label: 'pyrCellNum' },
   { id: 'payCntrNum', label: 'payCbtrNum' },
@@ -176,7 +182,7 @@ export default function EnhancedTable() {
 
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const [selectedBill, setSelectedBill] = React.useState(null);
-  
+
   const handleClickOpenConfirm = (e, bill) => {
     e.stopPropagation();
 
@@ -188,6 +194,159 @@ export default function EnhancedTable() {
   const handleCloseConfirm = () => {
     setOpenConfirm(false);
   };
+
+
+
+
+  const [open1, setOpen1] = React.useState(false);
+
+  const handleClose1 = () => {
+    setOpen1(false);
+  };
+
+
+
+
+
+
+  const [formData, setFormData] = useState({
+    particularName: '',
+    payerName: '',
+    payerPhoneNumber: '',
+    payerEmail: '',
+    controlNumber: 0,
+    billAmount: 0.0,
+    expireDate: '',
+    description: ''
+  });
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = () => {
+    if (!formData.particularName || !formData.payerName || !formData.payerPhoneNumber) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+
+    const data = {
+      payerName: formData.payerName,
+      payerPhone: formData.payerPhoneNumber,
+      payerEmail: formData.payerEmail
+    }
+
+    AuthService.setBilling(data).then((res) => {
+      console.log(res);
+    })
+
+  };
+
+
+
+  const handleMouseEnter = (e) => {
+    e.currentTarget.style.textDecoration = 'underline';
+    e.currentTarget.style.color = 'blue';
+  };
+
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.textDecoration = 'none';
+    e.currentTarget.style.color = 'inherit';
+  };
+
+  const [billValue, setBillValue] = useState({});
+  const handleBill = (e, clicked_bill) => {
+    e.preventDefault();
+    setOpenBill(true);
+    console.log(clicked_bill);
+    setBillValue(clicked_bill);
+  };
+
+
+
+
+
+  const [openBill, setOpenBill] = React.useState(false);
+  const handleCloseBill = () => {
+    setOpenBill(false);
+  }
+  const [billInfo] = useState([
+    ['createdTime', '2024-01-09T11:42:36.028+00:00'],
+    ['billId', 'VRB-1704800556026'],
+    ['payCntrNum', '199360000085'],
+    ['billDesc', 'Full Registration Fee'],
+    ['Gepg Response', 'Successful'],
+    ['billAmt', '10,000.00'],
+    ['pyrName', 'JARIBU'],
+    ['pyrCellNum', '0625677641'],
+    ['pyrEmail', ''],
+    ['Created By', 'zmwalwama'],
+    ['lastModifiedBy', 'zmwalwama'],
+    ['last_time', '2024-01-09T11:42:36.647+00:00'],
+    ['spCode', 'SP19936'],
+    ['trxStsCode', '7101'],
+    ['trxSts', 'GS'],
+    ['subSpCode', '1001'],
+    ['spSysId', 'TVRB001'],
+    ['ccy', 'TZS'],
+    ['miscAmt', '0'],
+    ['billExprDt', '2024-02-08T14:42:36'],
+    ['billGenDt', '2024-01-09T14:42:36'],
+    ['billApprBy', ''],
+    ['billEqvAmt', '10000'],
+    ['billGenBy', ''],
+    ['billPayOpt', '1'],
+  ]);
+
+
+  const attributesToDisplay = [
+    'createdTime',
+    'billId',
+    'payCntrNum',
+    'billDesc',
+    'gepgResponse',
+    'billAmt',
+    'pyrName',
+    'pyrCellNum',
+    'pyrEmail',
+    'Created By',
+    'lastModifiedBy',
+    'last_time',
+    'spCode',
+    'trxStsCode',
+    'trxSts',
+    'subSpCode',
+    'spSysId',
+    'ccy',
+    'miscAmt',
+    'billExprDt',
+    'billGenDt',
+    'billApprBy',
+    'billEqvAmt',
+    'billGenBy',
+    'billPayOpt',
+  ];
+
+
+  const [paymentsInfo] = useState([
+    ['billAmt', '10,000.00'],
+    ['paidAmt', 'TZS 10,000.00'],
+    ['pyrName', 'JARIBU'],
+    ['pyrCellNum', '255625677641'],
+    ['payCtrNum', '199360000085'],
+    ['trxDtTm', '2024-01-09T15:27:16'],
+    ['pspName', 'UAT Simulator'],
+    ['ctrAccNum', 'GEPG0123456'],
+    ['pspReceiptNumber', '1704803236988'],
+    ['payRefId', '924009000094757'],
+  ]);
+
 
 
   return (
@@ -208,7 +367,7 @@ export default function EnhancedTable() {
             <RefreshIcon />
           </IconButton>
           {loading && <CircularProgress size={24} />}
-          <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+          <Button onClick={(e) => setOpen1(true)} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
             Create Bill
           </Button>
         </div>
@@ -259,7 +418,7 @@ export default function EnhancedTable() {
                   <TableRow
                     key={row.id}
                     hover
-                    onClick={(event) => handleClick(event, row.id)}
+
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
@@ -269,23 +428,27 @@ export default function EnhancedTable() {
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
+                        onClick={(event) => handleClick(event, row.id)}
                         checked={isItemSelected}
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
                     <TableCell  >{index + 1}</TableCell>
-                    <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
+                    <TableCell
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                      onClick={(e) => { handleBill(e, row) }} style={{ fontSize: '1rem', color: 'blue', cursor: 'pointer' }} component="th" id={labelId} scope="row" padding="none">
                       {row.billId}
                     </TableCell>
                     <TableCell  >{row.pyrName}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} >0{row.pyrCellNum}</TableCell>
+                    <TableCell style={{ fontSize: '1rem' }} >{row.pyrCellNum}</TableCell>
                     <TableCell style={{ fontSize: '1rem', color: 'green' }} >{row.payCntrNum}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }}>{formatDateTime(row.createdTime)}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }}>{formatAmount(row.billAmt)}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }}>{row.billDesc}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}><Button onClick={(e) => {handleClickOpenConfirm(e, row.billId)}} variant="contained" className="btn btn-danger bg-danger" 
-                    // startIcon={<CancelIcon />} 
-                    style={{ fontSize: '14px', backgroundColor: '#ff272e' }}>Cancel</Button></TableCell>
+                    <TableCell style={{ fontSize: '1rem' }}><Button onClick={(e) => { handleClickOpenConfirm(e, row.billId) }} variant="contained" className="btn btn-danger bg-danger"
+                      // startIcon={<CancelIcon />} 
+                      style={{ fontSize: '14px', backgroundColor: '#ff272e' }}>Cancel</Button></TableCell>
                   </TableRow>
                 );
               })}
@@ -318,13 +481,227 @@ export default function EnhancedTable() {
         <DialogTitle>{`Hello ${sessionStorage.getItem('username')}`}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            You are about to cancel bill <span style={{ color: 'blue' }}>{selectedBill}</span>, press Agree to proceed or Disagree to cancel from removal of bill.
+            You are about to cancel bill <span style={{ color: 'blue' }}>{selectedBill}</span>, please provide reason for cancellation.
           </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            id="outlined-textarea"
+            margin="dense"
+            label="Reason"
+            name="reason"
+
+            rows={5}
+            type="text"
+            variant="outlined"
+            fullWidth
+            multiline
+          />
         </DialogContent>
         <DialogActions>
-          <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Disagree</Button>
-          <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
+          <Button color='error' style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Dicharge</Button>
+          <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Submit</Button>
         </DialogActions>
+      </Dialog>
+
+
+
+
+      <Dialog open={open1} onClose={handleClose1} fullWidth maxWidth="xl">
+        <DialogTitle>Create New Bill</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth sx={{ marginBottom: 2, marginTop: 2 }}>
+            <InputLabel>Particular Name</InputLabel>
+            <Select
+              fullWidth
+              value={formData.particularName}
+              onChange={handleChange}
+              name="particularName"
+            >
+              <MenuItem value="1">Full Registration Fee</MenuItem>
+
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            label="Payer Name"
+            name="payerName"
+            value={formData.payerName}
+            onChange={handleChange}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Payer Phone Number"
+            name="payerPhoneNumber"
+            value={formData.payerPhoneNumber}
+            onChange={handleChange}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Payer Email"
+            name="payerEmail"
+            value={formData.payerEmail}
+            onChange={handleChange}
+            sx={{ marginBottom: 2 }}
+          />
+
+          {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+
+          {/* <TextField
+          fullWidth
+          label="Controll Number"
+          type="number"
+          name="controlNumber"
+          value={formData.controlNumber}
+          onChange={handleChange}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          fullWidth
+          label="Bill Amount"
+          type="number"
+          name="billAmount"
+          value={formData.billAmount}
+          onChange={handleChange}
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          fullWidth
+          label="Expire Date"
+          type="date"
+          name="expireDate"
+          value={formData.expireDate}
+          onChange={handleChange}
+          sx={{ marginBottom: 2 }}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          fullWidth
+          label="Description"
+          multiline
+          rows={4}
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          sx={{ marginBottom: 2 }}
+        /> */}
+
+
+
+          <TableContainer component={Paper} style={{ marginTop: '16px' }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px' }}>Attribute</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px' }}>Value</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}>controlNumber</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}>0</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}>Bill Amount</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}>0</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}>Expire Date</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}>Description</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'gray', fontSize: '18px' }}></TableCell>
+                </TableRow>
+
+
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose1}>Cancel</Button>
+          <Button onClick={handleSubmit} variant="contained" color="primary">Create Bill</Button>
+        </DialogActions>
+      </Dialog>
+
+
+
+
+
+
+
+      <Dialog open={openBill} onClose={handleCloseBill} maxWidth="xl" fullWidth>
+        <DialogTitle>Bill and Payments Information</DialogTitle>
+        
+        <DialogContent>
+          <div style={{ display: 'flex' }}>
+            {/* Left Section: Bill Info */}
+            <div style={{ flex: 1, marginRight: '1rem' }}>
+              <h3>Bill Info</h3>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableBody>
+                    {/* {billInfo.map((row, index) => (
+                      <TableRow key={index}>
+                        <TableCell component="th" scope="row">{row[0]}</TableCell>
+                        <TableCell>{row[1]}</TableCell>
+                      </TableRow>
+                    ))} */}
+                    {/* {Object.entries(billValue).map(([key, value]) => (
+                <TableRow key={key}>
+                  <TableCell component="th" scope="row">{key}</TableCell>
+                  <TableCell>{value}</TableCell>
+                </TableRow>
+              ))} */}
+
+                    {/* {Object.entries(billValue).map(([attribute, value]) => (
+                      <TableRow key={attribute}>
+                        <TableCell component="th" scope="row">{attribute}</TableCell>
+                        <TableCell>{value}</TableCell>
+                      </TableRow>
+                    ))} */}
+                    {attributesToDisplay.map(attribute => (
+                      <TableRow key={attribute}>
+                        <TableCell component="th" scope="row">{attribute}</TableCell>
+                        <TableCell>{billValue[attribute]}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+
+            {/* Right Section: Payments */}
+            <div style={{ flex: 1 }}>
+              <h3>Payments</h3>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableBody>
+                    {paymentsInfo.map((row, index) => (
+                      <TableRow key={index}>
+                        <TableCell component="th" scope="row">{row[0]}</TableCell>
+                        <TableCell>{row[1]}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Button style={{ marginTop: '1rem' }} variant="contained" color="primary">Receipt</Button>
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+        <Button style={{ marginRight: '30px' }} onClick={handleCloseBill} color="primary">
+          Close
+        </Button>
+      </DialogActions>
       </Dialog>
     </Paper>
   );

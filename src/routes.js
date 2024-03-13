@@ -17,7 +17,7 @@ import Individual from "./views/Individual";
 
 export default [
   {
-    path: "/evrb",
+    path: "/evrb/",
     exact: true,
     layout: DefaultLayout,
     component: () => <Redirect to="/evrb/dashboard" />

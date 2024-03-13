@@ -26,6 +26,9 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+
 
 
 
@@ -60,7 +63,7 @@ import AuthService from '../services/auth/auth_service';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
-  });
+});
 
 function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, BillAmt, BillDesc) {
   return { id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, BillAmt, BillDesc };
@@ -199,7 +202,7 @@ export default function CompaniesTable() {
 
 
   const [openConfirm, setOpenConfirm] = React.useState(false);
-  
+
   const handleClickOpenConfirm = (e) => {
     e.stopPropagation();
     handleClose();
@@ -305,10 +308,10 @@ export default function CompaniesTable() {
                     <TableCell style={{ fontSize: '1rem' }}>{(row.telephone)}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }}>{row.tin}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }}>
-                    <IconButton onClick={handleClick1}>
+                      <IconButton onClick={handleClick1}>
                         <MoreVertIcon />
                       </IconButton>
-                      <Menu
+                      {/* <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
@@ -316,6 +319,32 @@ export default function CompaniesTable() {
                         <MenuItem onClick={(e) => { handleClickOpenConfirm(e);}}>Delete</MenuItem>
                         <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>Edit</MenuItem>
                         <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>View</MenuItem>
+                      </Menu> */}
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                      >
+                         <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>
+                          <ListItemIcon>
+                            <VisibilityIcon fontSize="small" />
+                          </ListItemIcon>
+                          View
+                        </MenuItem>
+                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                          <ListItemIcon>
+                            <EditIcon fontSize="small" />
+                          </ListItemIcon>
+                          Edit
+                        </MenuItem>
+                        <MenuItem onClick={handleClickOpenConfirm}>
+                          <ListItemIcon>
+                            <DeleteIcon fontSize="small" />
+                          </ListItemIcon>
+                          Delete
+                        </MenuItem>
+                      
+                       
                       </Menu>
                     </TableCell>
                   </TableRow>
@@ -340,7 +369,7 @@ export default function CompaniesTable() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      
+
 
 
 
@@ -368,7 +397,7 @@ export default function CompaniesTable() {
             </Button>
           </Toolbar>
         </AppBar>
-        
+
       </Dialog>
 
 
@@ -379,10 +408,10 @@ export default function CompaniesTable() {
         onClose={handleCloseConfirm}
         aria-describedby="alert-dialog-slide-description"
       >
-      <DialogTitle>{`Hello ${sessionStorage.getItem('username')}`}</DialogTitle>
+        <DialogTitle>{`Hello ${sessionStorage.getItem('username')}`}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-          Are you sure you want to delete this Company from the database?
+            Are you sure you want to delete this Company from the database?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
