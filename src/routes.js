@@ -14,6 +14,7 @@ import Tables from "./views/Tables";
 import BlogPosts from "./views/BlogPosts";
 import Company from "./views/Company";
 import Individual from "./views/Individual";
+import Reconciliation from "./views/Reconciliation";
 
 export default [
   {
@@ -64,6 +65,13 @@ export default [
     layout: DefaultLayout,
     component: Company
   },
+
+  {
+    path: "/evrb/reconciliation",
+    layout: DefaultLayout,
+    component: Reconciliation
+  },
+  
   // {
   //   path: "/blog-posts",
   //   layout: DefaultLayout,

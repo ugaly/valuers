@@ -77,9 +77,9 @@ function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, Bi
 
 const headCells = [
   { id: 'counter', label: '#' },
+  { id: 'regnNo', label: 'regnNo' },
   { id: 'firstName', label: 'firstName' },
   { id: 'middleName', label: 'middleName' },
-  { id: 'regnNo', label: 'regnNo' },
   { id: 'certificateNo', label: 'certificateNo' },
   { id: 'membershipType', label: 'membershipType' },
   { id: 'telephone', label: 'telephone' },
@@ -87,7 +87,7 @@ const headCells = [
   { id: 'action', label: 'action' },
 ];
 
-export default function IndividualsTable() {
+export default function IndividualsTable({onClickItem}) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -96,6 +96,7 @@ export default function IndividualsTable() {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [rows, setRows] = useState([]);
+  const [switched, setSwitched] = useState(false);
 
 
   useEffect(() => {
@@ -104,7 +105,7 @@ export default function IndividualsTable() {
       setRows(res.data.content);
       setTimeout(() => {
         setLoading(false);
-      }, 3000);
+      }, 1000);
     })
   }, [])
 
@@ -184,9 +185,11 @@ export default function IndividualsTable() {
   }
 
   const handleLoading = () => {
+    setLoading(true);
     setTimeout(() => {
-      setLoading(true);
-    }, 1000);
+      setLoading(false);
+    }, 3000);
+    
   }
 
 
@@ -202,15 +205,9 @@ export default function IndividualsTable() {
   };
 
 
-  const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
-  const handleClose1 = () => {
-    setOpen(false);
-  };
+
 
 
 
@@ -226,7 +223,27 @@ export default function IndividualsTable() {
     setOpenConfirm(false);
   };
 
+
+  const handleMouseEnter = (e) => {
+    e.currentTarget.style.textDecoration = 'underline';
+    e.currentTarget.style.color = 'blue';
+  };
+
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.textDecoration = 'none';
+
+    e.currentTarget.style.color = 'blue';
+  };
+
+  const handleClickItem = (e, item_data) => {
+    e.stopPropagation();
+   onClickItem(item_data)
+  }
+
+
+
   return (
+  <>
     <Paper>
       <Toolbar className="d-flex justify-content-between mt-3 pb-2">
         <div style={{ width: '50%' }}>
@@ -240,11 +257,11 @@ export default function IndividualsTable() {
           />
         </div>
         <div className="d-flex align-items-center">
-          <IconButton color="primary" size="large" className="mx-2">
-            <RefreshIcon onClick={() => handleLoading()} />
+          <IconButton  onClick={() => handleLoading()} disabled={loading} color="primary" size="large" className="mx-2">
+            <RefreshIcon  />
           </IconButton>
           {loading && <CircularProgress size={24} />}
-          <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px', }}>
+          <Button disabled={loading} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px', }}>
             Add Individual
           </Button>
         </div>
@@ -295,26 +312,31 @@ export default function IndividualsTable() {
                   <TableRow
                     key={row.id}
                     hover
-                    onClick={(event) => handleClick(event, row.id)}
+                    
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
                     selected={isItemSelected}
                   >
-
                     <TableCell padding="checkbox">
                       <Checkbox
+                      onClick={(event) => handleClick(event, row.id)}
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
                     <TableCell  >{index + 1}</TableCell>
+                    <TableCell
+                     onMouseEnter={handleMouseEnter}
+                     onMouseLeave={handleMouseLeave}
+                     onClick={(e) => handleClickItem(e,row)}
+                     style={{ fontSize: '1rem', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }}
+                      >{row.regnNo}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }} component="th" id={labelId} scope="row" padding="none">
                       {row.firstName}
                     </TableCell>
                     <TableCell  >{row.middleName}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} >0{row.regnNo}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }} >{row.certificateNo}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }}>{(row.membershipType)}</TableCell>
                     <TableCell style={{ fontSize: '1rem' }}>{(row.telephone)}</TableCell>
@@ -344,7 +366,7 @@ export default function IndividualsTable() {
                         onClose={handleClose}
                       >
                        
-                        <MenuItem onClick={(e) => { e.stopPropagation();   handleClose(); handleClickOpen(); }}>
+                        <MenuItem onClick={(e) => { e.stopPropagation();  handleClose(); handleClickItem(e,row);  }}>
                           <ListItemIcon>
                             <VisibilityIcon fontSize="small" />
                           </ListItemIcon>
@@ -394,33 +416,6 @@ export default function IndividualsTable() {
 
 
 
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={handleClose1}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: 'relative', }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose1}
-              aria-label="close"
-            >
-              <CloseIcon />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              View Individual Details
-            </Typography>
-            <Button autoFocus color="inherit" onClick={handleClose1}>
-              save
-            </Button>
-          </Toolbar>
-        </AppBar>
-
-      </Dialog>
-
 
 
       <Dialog
@@ -442,5 +437,8 @@ export default function IndividualsTable() {
         </DialogActions>
       </Dialog>
     </Paper>
+   
+ 
+   </>
   );
 }

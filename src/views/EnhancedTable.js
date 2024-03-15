@@ -33,8 +33,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 
 
+
 import Dialog from '@mui/material/Dialog';
-import { FormControl } from '@mui/material';
+import { Alert, FormControl } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -87,7 +88,7 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState('billId');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [rows, setRows] = useState([]);
@@ -217,7 +218,8 @@ export default function EnhancedTable() {
     controlNumber: 0,
     billAmount: 0.0,
     expireDate: '',
-    description: ''
+    description: '',
+    reason: '',
   });
   const [error, setError] = useState('');
 
@@ -237,13 +239,39 @@ export default function EnhancedTable() {
 
 
     const data = {
+      particularId: 1,
       payerName: formData.payerName,
       payerPhone: formData.payerPhoneNumber,
       payerEmail: formData.payerEmail
     }
 
+    setLoading(true);
+
     AuthService.setBilling(data).then((res) => {
       console.log(res);
+      if (res.data.message === 'data received') {
+
+        AuthService.getBilling().then((res) => {
+          console.log(res.data.content);
+          setRows(res.data.content);
+          setTimeout(() => {
+            setLoading(false);
+            setOpen1(false);
+            setFormData({
+              particularName: '',
+              payerName: '',
+              payerPhoneNumber: '',
+              payerEmail: '',
+              controlNumber: 0,
+              billAmount: 0.0,
+              expireDate: '',
+              description: ''
+            });
+            window.location.reload();
+          }, 500);
+        })
+
+      }
     })
 
   };
@@ -257,7 +285,8 @@ export default function EnhancedTable() {
 
   const handleMouseLeave = (e) => {
     e.currentTarget.style.textDecoration = 'none';
-    e.currentTarget.style.color = 'inherit';
+
+    e.currentTarget.style.color = 'blue';
   };
 
   const [billValue, setBillValue] = useState({});
@@ -286,7 +315,7 @@ export default function EnhancedTable() {
     ['pyrName', 'JARIBU'],
     ['pyrCellNum', '0625677641'],
     ['pyrEmail', ''],
-    ['Created By', 'zmwalwama'],
+    ['createdBy', 'zmwalwama'],
     ['lastModifiedBy', 'zmwalwama'],
     ['last_time', '2024-01-09T11:42:36.647+00:00'],
     ['spCode', 'SP19936'],
@@ -311,11 +340,12 @@ export default function EnhancedTable() {
     'payCntrNum',
     'billDesc',
     'gepgResponse',
+    'description',
     'billAmt',
     'pyrName',
     'pyrCellNum',
     'pyrEmail',
-    'Created By',
+    'createdBy',
     'lastModifiedBy',
     'last_time',
     'spCode',
@@ -334,6 +364,22 @@ export default function EnhancedTable() {
   ];
 
 
+  const getCellStyle = (attribute) => {
+    const style = { color: 'inherit' };
+
+    if (['payCntrNum', 'gepgResponse', 'pyrName'].includes(attribute)) {
+      style.color = 'green';
+
+
+      if (['payCntrNum', 'pyrName'].includes(attribute)) {
+        style.fontWeight = 'bold';
+      }
+
+      return style;
+    };
+  }
+
+
   const [paymentsInfo] = useState([
     ['billAmt', '10,000.00'],
     ['paidAmt', 'TZS 10,000.00'],
@@ -348,9 +394,55 @@ export default function EnhancedTable() {
   ]);
 
 
+  const handleCancelClickedBill = (e, clicked_bill) => {
+    e.preventDefault();
+    console.log(clicked_bill);
+
+    if (!formData.reason) {
+      setError('Please provide a reason for cancellation.');
+      return;
+    }
+
+    const data = {
+      billId: clicked_bill,
+      reason: formData.reason
+    }
+    console.log(data);
+    setLoading(true);
+    AuthService.cancelBill(data).then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        AuthService.getBilling().then((res) => {
+          setRows(res.data.content);
+          handleCloseConfirm();
+          window.alert('Bill cancelled successfully');
+          setFormData({
+            reason: ''
+          })
+          setTimeout(() => {
+            setLoading(false);
+          }, 500);
+        })
+      }
+    })
+  }
+
+
+  const [receipt, setReceipt] = useState({});
+  const handleReceipt = (e, clicked_receipt) => {
+    e.preventDefault();
+    console.log(clicked_receipt.id);
+
+    AuthService.getReceipt(clicked_receipt.id).then((res) => {
+      console.log(res);
+      setReceipt(res.data);
+    })
+  }
+
 
   return (
-    <Paper>
+    <Paper style={{ overflow: 'hidden' }}>
+
       <Toolbar className="d-flex justify-content-between mt-3 pb-2">
         <div style={{ width: '50%' }}>
           <TextField
@@ -373,8 +465,11 @@ export default function EnhancedTable() {
         </div>
       </Toolbar>
 
-      <TableContainer>
-        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+      {/* <TableContainer>
+        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle"> */}
+
+      <TableContainer style={{ maxHeight: 700, overflow: 'auto' }}>
+        <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
@@ -437,18 +532,39 @@ export default function EnhancedTable() {
                     <TableCell
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
-                      onClick={(e) => { handleBill(e, row) }} style={{ fontSize: '1rem', color: 'blue', cursor: 'pointer' }} component="th" id={labelId} scope="row" padding="none">
+                      onClick={(e) => { handleBill(e, row) }} style={{ fontSize: '16px', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }} component="th" id={labelId} scope="row" padding="none">
                       {row.billId}
                     </TableCell>
                     <TableCell  >{row.pyrName}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} >{row.pyrCellNum}</TableCell>
-                    <TableCell style={{ fontSize: '1rem', color: 'green' }} >{row.payCntrNum}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{formatDateTime(row.createdTime)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{formatAmount(row.billAmt)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{row.billDesc}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}><Button onClick={(e) => { handleClickOpenConfirm(e, row.billId) }} variant="contained" className="btn btn-danger bg-danger"
+                    <TableCell style={{ fontSize: '16px' }} >{row.pyrCellNum}</TableCell>
+                    <TableCell style={{ fontSize: '16px', color: 'green' }} >{row.payCntrNum}</TableCell>
+                    <TableCell style={{ fontSize: '16px' }}>{formatDateTime(row.createdTime)}</TableCell>
+                    <TableCell style={{ fontSize: '16px' }}>{formatAmount(row.billAmt)}</TableCell>
+                    <TableCell style={{ fontSize: '16px' }}>{row.billDesc}</TableCell>
+                    {/* <TableCell style={{ fontSize: '1rem' }}>
+                      <Button onClick={(e) => { handleClickOpenConfirm(e, row.billId) }} variant="contained" className="btn btn-danger bg-danger"
                       // startIcon={<CancelIcon />} 
-                      style={{ fontSize: '14px', backgroundColor: '#ff272e' }}>Cancel</Button></TableCell>
+                      style={{ fontSize: '14px', backgroundColor: '#ff272e' }}>Cancel</Button>
+                      {row.deleted === true && <span style={{ color: 'red' }}>(Deleted)</span>}
+                      </TableCell> */}
+
+                    <TableCell style={{ fontSize: '18px' }}>
+                      {!row.deleted && (  // Only render the button if row.deleted is not true
+                        <Button
+                          onClick={(e) => { handleClickOpenConfirm(e, row.billId) }}
+                          variant="contained"
+                          className="btn btn-danger bg-danger"
+                          style={{ fontSize: '14px', backgroundColor: '#ff272e' }}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                      {row.deleted && (
+                        <span style={{ fontWeight: 'bold', textAlign: 'center' }}>Not Active</span>
+                      )}
+                    </TableCell>
+
+
                   </TableRow>
                 );
               })}
@@ -474,6 +590,7 @@ export default function EnhancedTable() {
       <Dialog
         open={openConfirm}
         TransitionComponent={Transition}
+        maxWidth="lg"
         keepMounted
         onClose={handleCloseConfirm}
         aria-describedby="alert-dialog-slide-description"
@@ -483,6 +600,7 @@ export default function EnhancedTable() {
           <DialogContentText id="alert-dialog-slide-description">
             You are about to cancel bill <span style={{ color: 'blue' }}>{selectedBill}</span>, please provide reason for cancellation.
           </DialogContentText>
+          {error && <div style={{ color: 'red', marginBottom: '1rem', fontSize: '1rem', marginTop: '1rem' }}>{error}</div>}
           <TextField
             autoFocus
             required
@@ -490,7 +608,8 @@ export default function EnhancedTable() {
             margin="dense"
             label="Reason"
             name="reason"
-
+            value={formData.reason}
+            onChange={handleChange}
             rows={5}
             type="text"
             variant="outlined"
@@ -500,14 +619,14 @@ export default function EnhancedTable() {
         </DialogContent>
         <DialogActions>
           <Button color='error' style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Dicharge</Button>
-          <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Submit</Button>
+          <Button style={{ fontSize: '1rem' }} onClick={(e) => handleCancelClickedBill(e, selectedBill)}>Submit</Button>
         </DialogActions>
       </Dialog>
 
 
 
 
-      <Dialog open={open1} onClose={handleClose1} fullWidth maxWidth="xl">
+      <Dialog TransitionComponent={Transition} open={open1} onClose={handleClose1} fullWidth maxWidth="xl">
         <DialogTitle>Create New Bill</DialogTitle>
         <DialogContent>
           <FormControl fullWidth sx={{ marginBottom: 2, marginTop: 2 }}>
@@ -532,6 +651,7 @@ export default function EnhancedTable() {
           />
           <TextField
             fullWidth
+            type='number'
             label="Payer Phone Number"
             name="payerPhoneNumber"
             value={formData.payerPhoneNumber}
@@ -548,48 +668,6 @@ export default function EnhancedTable() {
           />
 
           {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
-
-          {/* <TextField
-          fullWidth
-          label="Controll Number"
-          type="number"
-          name="controlNumber"
-          value={formData.controlNumber}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          fullWidth
-          label="Bill Amount"
-          type="number"
-          name="billAmount"
-          value={formData.billAmount}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          fullWidth
-          label="Expire Date"
-          type="date"
-          name="expireDate"
-          value={formData.expireDate}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <TextField
-          fullWidth
-          label="Description"
-          multiline
-          rows={4}
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        /> */}
-
 
 
           <TableContainer component={Paper} style={{ marginTop: '16px' }}>
@@ -637,9 +715,9 @@ export default function EnhancedTable() {
 
 
 
-      <Dialog open={openBill} onClose={handleCloseBill} maxWidth="xl" fullWidth>
+      <Dialog TransitionComponent={Transition} open={openBill} onClose={handleCloseBill} maxWidth="xl" fullWidth>
         <DialogTitle>Bill and Payments Information</DialogTitle>
-        
+
         <DialogContent>
           <div style={{ display: 'flex' }}>
             {/* Left Section: Bill Info */}
@@ -670,7 +748,7 @@ export default function EnhancedTable() {
                     {attributesToDisplay.map(attribute => (
                       <TableRow key={attribute}>
                         <TableCell component="th" scope="row">{attribute}</TableCell>
-                        <TableCell>{billValue[attribute]}</TableCell>
+                        <TableCell style={getCellStyle(attribute)}>{billValue[attribute]}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -693,15 +771,15 @@ export default function EnhancedTable() {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <Button style={{ marginTop: '1rem' }} variant="contained" color="primary">Receipt</Button>
+              <Button onClick={(e) => handleReceipt(e, billValue)} style={{ marginTop: '1rem' }} variant="contained" color="primary">Receipt</Button>
             </div>
           </div>
         </DialogContent>
         <DialogActions>
-        <Button style={{ marginRight: '30px' }} onClick={handleCloseBill} color="primary">
-          Close
-        </Button>
-      </DialogActions>
+          <Button style={{ marginRight: '30px' }} onClick={handleCloseBill} color="primary">
+            Close
+          </Button>
+        </DialogActions>
       </Dialog>
     </Paper>
   );
