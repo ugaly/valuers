@@ -18,12 +18,32 @@ export default class AuthService{
         return API.ax.post('billing/cancel/bill',data).catch(e=>console.log(e))
     }
 
+    static getBillPayment(bill_id){
+        return API.ax.get(`billing/${bill_id}/payments`).catch(e=>console.log(e))
+    }
+
     static getReceipt(bill_id){
         return API.ax.get(`documents/generate/receipt/${bill_id}`).catch(e=>console.log(e))
     }
 
     static getIndividual(){
         return API.ax.get('registration/read/list/individual').catch(e=>console.log(e))
+    }
+
+    static getRegistrationInfo(regno){
+        return API.ax.get(`registration/read/info?candidateNo=${regno}`).catch(e=>console.log(e))
+    }
+
+    static getExamResults(regno){
+        return API.ax.get(`registration/read/exams/results?candidateNo=${regno}`).catch(e=>console.log(e))
+    }
+
+    static getAcademicResultsInfo(regno){
+        return API.ax.get(`registration/read/education/level?candidateNo=${regno}`).catch(e=>console.log(e))
+    }
+
+    static getCpp(regno){
+        return API.ax.get(`registration/read/registration/cpp?candidateNo=${regno}`).catch(e=>console.log(e))
     }
 
     static getCompany(){

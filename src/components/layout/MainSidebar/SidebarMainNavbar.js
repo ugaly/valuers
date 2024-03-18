@@ -31,13 +31,13 @@ class SidebarMainNavbar extends React.Component {
             href="#"
             style={{ lineHeight: "25px" }}
           >
-            <div className="d-table m-auto">
+            <div className="d-table ml-3 m-2">
               <img
                 id="main-logo"
                 className="d-inline-block align-top mr-1"
                 style={{ maxWidth: "30px" }}
                 src={logo}
-                alt="Shards Dashboard"
+                alt="Valuers logo"
               />
               {!hideLogoText && (
                 <span style={{ fontSize: "18px" }} className="d-none d-md-inline ml-1">

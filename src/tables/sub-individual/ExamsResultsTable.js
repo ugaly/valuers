@@ -1,12 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
+import AuthService from '../../services/auth/auth_service';
 
-const ExamsResultsTable = ({ }) => {
+const ExamsResultsTable = ({ data }) => {
     const [searchText, setSearchText] = useState('');
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = useState(false);
+    const [examsResults, setExamsResults] = useState([]);
+
+    useEffect(() => {
+        setLoading(true); // Show loader while fetching data
+        AuthService.getExamResults(data.regnNo)
+            .then((response) => {
+                console.log(response.data);
+                setExamsResults(response.data.content); // Update state with fetched data
+            })
+            .catch((error) => {
+                console.error('Error fetching exam results:', error);
+            })
+            .finally(() => {
+                setLoading(false); // Hide loader after data is fetched
+            });
+    }, [data.regnNo]);
 
     const handleSearchChange = (event) => {
         setSearchText(event.target.value);
@@ -20,39 +37,9 @@ const ExamsResultsTable = ({ }) => {
         }, 3000);
     };
 
-
-
-    const examsResults = [
-        {
-            DateOfExam: '2022-01-15',
-            DateOfApproval: '2022-01-20',
-            Venue: 'Exam Hall A',
-            TotalScore: 85,
-            Grade: 'A',
-            Remarks: 'Excellent performance',
-        },
-        {
-            DateOfExam: '2022-02-10',
-            DateOfApproval: '2022-02-15',
-            Venue: 'Exam Hall B',
-            TotalScore: 72,
-            Grade: 'B+',
-            Remarks: 'Good effort',
-        },
-        {
-            DateOfExam: '2022-03-25',
-            DateOfApproval: '2022-04-02',
-            Venue: 'Exam Hall C',
-            TotalScore: 60,
-            Grade: 'B',
-            Remarks: 'Satisfactory',
-        },
-        // Add more sample data as needed
-    ];
-
     // Filter examsResults based on search text
     const filteredResults = examsResults.filter((result) =>
-        result.DateOfExam.toLowerCase().includes(searchText.toLowerCase())
+        result.dateOfExam.toLowerCase().includes(searchText.toLowerCase())
     );
 
     return (
@@ -62,7 +49,6 @@ const ExamsResultsTable = ({ }) => {
                     <TextField
                         label="Search"
                         variant="outlined"
-
                         value={searchText}
                         onChange={handleSearchChange}
                         fullWidth
@@ -84,7 +70,7 @@ const ExamsResultsTable = ({ }) => {
                     </Button>
                 </div>
             </div>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} style={{boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'}}>
                 <Table aria-label="exams results table">
                     <TableHead>
                         <TableRow>
@@ -99,12 +85,12 @@ const ExamsResultsTable = ({ }) => {
                     <TableBody>
                         {filteredResults.map((result, index) => (
                             <TableRow key={index}>
-                                <TableCell>{result.DateOfExam}</TableCell>
-                                <TableCell>{result.DateOfApproval}</TableCell>
-                                <TableCell>{result.Venue}</TableCell>
-                                <TableCell>{result.TotalScore}</TableCell>
-                                <TableCell>{result.Grade}</TableCell>
-                                <TableCell>{result.Remarks}</TableCell>
+                                <TableCell>{result.dateOfExam}</TableCell>
+                                <TableCell>{result.dateOfApproval}</TableCell>
+                                <TableCell>{result.venue}</TableCell>
+                                <TableCell>{result.totalScore}</TableCell>
+                                <TableCell>{result.grade}</TableCell>
+                                <TableCell>{result.remarks}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

@@ -1,116 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
+import AuthService from '../../services/auth/auth_service';
 
-const AcademicInfoTable = ({ }) => {
-    const [searchText, setSearchText] = useState('');
-    const [loading, setLoading] = React.useState(false);
-    
+const AcademicInfoTable = ({ data }) => {
+  const [searchText, setSearchText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [academicInfo, setAcademicInfo] = useState([]);
 
-
-    const handleSearchChange = (event) => {
-        setSearchText(event.target.value);
+  useEffect(() => {
+    const fetchAcademicInfo = async () => {
+      setLoading(true);
+      try {
+        const response = await AuthService.getAcademicResultsInfo(data.regnNo);
+        setAcademicInfo(response.data.content);
+      } catch (error) {
+        console.error('Error fetching academic info:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleButtonClick = () => {
-        setLoading(true); // Show loader when button is clicked
-        // Simulate an action that takes 3 seconds (e.g., API call)
-        setTimeout(() => {
-            setLoading(false); // Hide loader after 3 seconds
-        }, 3000);
-    };
+    fetchAcademicInfo();
+  }, [data.regnNo]);
 
-    const academicInfo = [
-        {
-            Level: 'Bachelor',
-            Institution: 'University A',
-            YearOfGraduation: 2021,
-            County: 'County X',
-            Award: 'First Class',
-            RegNo: 'ABCD12345',
-        },
-        {
-            Level: 'Master',
-            Institution: 'University B',
-            YearOfGraduation: 2023,
-            County: 'County Y',
-            Award: 'Distinction',
-            RegNo: 'WXYZ98765',
-        },
-        // Add more sample data as needed
-    ];
+  const handleSearchChange = (event) => {
+    setSearchText(event.target.value);
+  };
 
-    // Filter academicInfo based on search text
-    const filteredInfo = academicInfo.filter((info) =>
-        info.Level.toLowerCase().includes(searchText.toLowerCase())
-    );
+  const handleButtonClick = () => {
+    setLoading(true);
+    // Simulate an action that takes 3 seconds (e.g., API call)
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  };
 
-    return (
-
-        <div>
+  // Filter academicInfo based on search text
+  const filteredInfo = academicInfo.filter((info) =>
+  info && info.levelName && info.levelName.toLowerCase().includes(searchText.toLowerCase())
+);
 
 
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <div style={{ width: '50%' }}>
-                    <TextField
-                        label="Search"
-                        variant="outlined"
-
-                        value={searchText}
-                        onChange={handleSearchChange}
-                        fullWidth
-                    />
-                </div>
-                <div className="d-flex align-items-center">
-                    <IconButton onClick={handleButtonClick} color="primary" size="large" disabled={loading}>
-                        <RefreshIcon />
-                    </IconButton>
-                    {loading && <CircularProgress style={{ marginRight: '8px' }} size={24} />}
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ fontWeight: 'bold' }}
-                        onClick={handleButtonClick}
-                        disabled={loading}
-                    >
-                        Add Info
-                    </Button>
-                </div>
-            </div>
-
-
-            <TableContainer component={Paper}>
-
-                <Table aria-label="academic info table" className='py-3'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Level</TableCell>
-                            <TableCell>Institution</TableCell>
-                            <TableCell>Year of Graduation</TableCell>
-                            <TableCell>County</TableCell>
-                            <TableCell>Award</TableCell>
-                            <TableCell>Reg No</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredInfo.map((info, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{info.Level}</TableCell>
-                                <TableCell>{info.Institution}</TableCell>
-                                <TableCell>{info.YearOfGraduation}</TableCell>
-                                <TableCell>{info.County}</TableCell>
-                                <TableCell>{info.Award}</TableCell>
-                                <TableCell>{info.RegNo}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div style={{ width: '50%' }}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchText}
+            onChange={handleSearchChange}
+            fullWidth
+          />
         </div>
-    );
+        <div className="d-flex align-items-center">
+          <IconButton onClick={handleButtonClick} color="primary" size="large" disabled={loading}>
+            <RefreshIcon />
+          </IconButton>
+          {loading && <CircularProgress style={{ marginRight: '8px' }} size={24} />}
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ fontWeight: 'bold' }}
+            onClick={handleButtonClick}
+            disabled={loading}
+          >
+            Add Info
+          </Button>
+        </div>
+      </div>
+
+      <TableContainer component={Paper} style={{boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'}}>
+        <Table aria-label="academic info table" className="py-3">
+          <TableHead>
+            <TableRow>
+              <TableCell>Level</TableCell>
+              <TableCell>Institution</TableCell>
+              <TableCell>Year of Graduation</TableCell>
+              <TableCell>County</TableCell>
+              <TableCell>Award</TableCell>
+              <TableCell>Reg No</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredInfo.map((info, index) => (
+              <TableRow key={index}>
+                <TableCell>{info.levelName}</TableCell>
+                <TableCell>{info.institution}</TableCell>
+                <TableCell>{info.yearOfGraduation}</TableCell>
+                <TableCell>{info.country}</TableCell>
+                <TableCell>{info.award}</TableCell>
+                <TableCell>{info.regNo}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
 };
 
 export default AcademicInfoTable;

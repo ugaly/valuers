@@ -95,11 +95,25 @@ export default function CompaniesTable() {
 
   useEffect(() => {
     AuthService.getCompany().then((res) => {
-      console.log(res.data.content);
-      setRows(res.data.content);
-      setTimeout(() => {
+      // console.log(res.data.content);
+      // setRows(res.data.content);
+      // setTimeout(() => {
+      //   setLoading(false);
+      // }, 3000);
+
+
+      if (res && res.data && res.data.content) {
+        setRows(res.data.content);
+      } else {
+        // Handle the case where the response structure is not as expected
+        console.error("Invalid response format from API");
+      }
+      setTimeout(function () {
         setLoading(false);
-      }, 3000);
+      }, 1000);
+
+
+
     })
   }, [])
 

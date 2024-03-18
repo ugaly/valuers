@@ -83,7 +83,7 @@ const headCells = [
   { id: 'cancel', label: 'cancel' },
 ];
 
-export default function EnhancedTable() {
+export default function EnhancedTable({ onClickItem }) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('billId');
   const [selected, setSelected] = React.useState([]);
@@ -96,11 +96,22 @@ export default function EnhancedTable() {
 
   useEffect(() => {
     AuthService.getBilling().then((res) => {
-      console.log(res.data.content);
-      setRows(res.data.content);
-      setTimeout(() => {
+      // console.log(res.data.content);
+      // setRows(res.data.content);
+      // setTimeout(() => {
+      //   setLoading(false);
+      // }, 3000);
+
+      if (res && res.data && res.data.content) {
+        setRows(res.data.content);
+      } else {
+        // Handle the case where the response structure is not as expected
+        console.error("Invalid response format from API");
+      }
+      setTimeout(function () {
         setLoading(false);
-      }, 3000);
+      }, 1000);
+
     })
   }, [])
 
@@ -292,7 +303,8 @@ export default function EnhancedTable() {
   const [billValue, setBillValue] = useState({});
   const handleBill = (e, clicked_bill) => {
     e.preventDefault();
-    setOpenBill(true);
+    // setOpenBill(true);
+    onClickItem(clicked_bill)
     console.log(clicked_bill);
     setBillValue(clicked_bill);
   };
@@ -304,6 +316,8 @@ export default function EnhancedTable() {
   const [openBill, setOpenBill] = React.useState(false);
   const handleCloseBill = () => {
     setOpenBill(false);
+    setDocumentUrl('');
+    setReceiptNotFound('');
   }
   const [billInfo] = useState([
     ['createdTime', '2024-01-09T11:42:36.028+00:00'],
@@ -428,16 +442,53 @@ export default function EnhancedTable() {
   }
 
 
-  const [receipt, setReceipt] = useState({});
+  const [receipt, setReceipt] = useState(null);
+  const [documentUrl, setDocumentUrl] = useState('');
+  const [mounted, setMounted] = useState(true); // Flag to track component mounting
+
+  useEffect(() => {
+    return () => {
+      // Cleanup function to set mounted status to false on component unmount
+      setMounted(false);
+    };
+  }, []);
+
+
+
+  const [loadingReceipt, setLoadingReceipt] = useState(false);
+  const [receiptNotFound, setReceiptNotFound] = useState('');
   const handleReceipt = (e, clicked_receipt) => {
+    setLoadingReceipt(true);
     e.preventDefault();
     console.log(clicked_receipt.id);
 
-    AuthService.getReceipt(clicked_receipt.id).then((res) => {
-      console.log(res);
-      setReceipt(res.data);
-    })
-  }
+    AuthService.getReceipt(clicked_receipt.id)
+      .then((res) => {
+        console.log(res);
+        if (res.data.data && res.data.data.document) {
+          const base64Data = res.data.data.document;
+          // const pdfUrl = `data:application/pdf;base64,${base64Data}`;
+          const pdfUrl = `${base64Data}`;
+          setTimeout(() => {
+            setDocumentUrl(pdfUrl);
+            setLoadingReceipt(false);
+          }, 500);
+        } else {
+          console.error('Empty document data or document not found');
+
+          setDocumentUrl(''); // Set empty URL in case of no document data
+          setTimeout(() => {
+            setLoadingReceipt(false);
+            setReceiptNotFound('Empty document data or document not found');
+          }, 2000);
+        }
+      })
+      .catch((error) => {
+        console.error('Network or server error:', error);
+        setDocumentUrl(''); // Set empty URL on error
+      });
+  };
+
 
 
   return (
@@ -465,11 +516,11 @@ export default function EnhancedTable() {
         </div>
       </Toolbar>
 
-      {/* <TableContainer>
-        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle"> */}
+      <TableContainer>
+        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
 
-      <TableContainer style={{ maxHeight: 700, overflow: 'auto' }}>
-        <Table stickyHeader aria-label="sticky table">
+          {/* <TableContainer style={{ maxHeight: 700, overflow: 'auto' }}>
+        <Table stickyHeader aria-label="sticky table"> */}
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
@@ -532,15 +583,20 @@ export default function EnhancedTable() {
                     <TableCell
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
-                      onClick={(e) => { handleBill(e, row) }} style={{ fontSize: '16px', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }} component="th" id={labelId} scope="row" padding="none">
+                      onClick={(e) => { handleBill(e, row) }}
+                      style={{ fontSize: '16px', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }} component="th" id={labelId} scope="row" padding="none">
                       {row.billId}
                     </TableCell>
-                    <TableCell  >{row.pyrName}</TableCell>
+                    <TableCell style={{ fontSize: '16px' }}  >{row.pyrName}</TableCell>
                     <TableCell style={{ fontSize: '16px' }} >{row.pyrCellNum}</TableCell>
                     <TableCell style={{ fontSize: '16px', color: 'green' }} >{row.payCntrNum}</TableCell>
                     <TableCell style={{ fontSize: '16px' }}>{formatDateTime(row.createdTime)}</TableCell>
                     <TableCell style={{ fontSize: '16px' }}>{formatAmount(row.billAmt)}</TableCell>
-                    <TableCell style={{ fontSize: '16px' }}>{row.billDesc}</TableCell>
+                    {/* <TableCell style={{ fontSize: '16px' }}>{row.billDesc}</TableCell> */}
+                    <TableCell style={{ fontSize: '16px' }}>
+                      {row.billDesc.length > 15 ? `${row.billDesc.slice(0, 15)}...` : row.billDesc}
+                    </TableCell>
+
                     {/* <TableCell style={{ fontSize: '1rem' }}>
                       <Button onClick={(e) => { handleClickOpenConfirm(e, row.billId) }} variant="contained" className="btn btn-danger bg-danger"
                       // startIcon={<CancelIcon />} 
@@ -548,7 +604,7 @@ export default function EnhancedTable() {
                       {row.deleted === true && <span style={{ color: 'red' }}>(Deleted)</span>}
                       </TableCell> */}
 
-                    <TableCell style={{ fontSize: '18px' }}>
+                    <TableCell style={{ fontSize: '16px' }}>
                       {!row.deleted && (  // Only render the button if row.deleted is not true
                         <Button
                           onClick={(e) => { handleClickOpenConfirm(e, row.billId) }}
@@ -560,7 +616,7 @@ export default function EnhancedTable() {
                         </Button>
                       )}
                       {row.deleted && (
-                        <span style={{ fontWeight: 'bold', textAlign: 'center' }}>Not Active</span>
+                        <span style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px' }}>Not Active</span>
                       )}
                     </TableCell>
 
@@ -726,25 +782,7 @@ export default function EnhancedTable() {
               <TableContainer component={Paper}>
                 <Table>
                   <TableBody>
-                    {/* {billInfo.map((row, index) => (
-                      <TableRow key={index}>
-                        <TableCell component="th" scope="row">{row[0]}</TableCell>
-                        <TableCell>{row[1]}</TableCell>
-                      </TableRow>
-                    ))} */}
-                    {/* {Object.entries(billValue).map(([key, value]) => (
-                <TableRow key={key}>
-                  <TableCell component="th" scope="row">{key}</TableCell>
-                  <TableCell>{value}</TableCell>
-                </TableRow>
-              ))} */}
 
-                    {/* {Object.entries(billValue).map(([attribute, value]) => (
-                      <TableRow key={attribute}>
-                        <TableCell component="th" scope="row">{attribute}</TableCell>
-                        <TableCell>{value}</TableCell>
-                      </TableRow>
-                    ))} */}
                     {attributesToDisplay.map(attribute => (
                       <TableRow key={attribute}>
                         <TableCell component="th" scope="row">{attribute}</TableCell>
@@ -759,19 +797,27 @@ export default function EnhancedTable() {
             {/* Right Section: Payments */}
             <div style={{ flex: 1 }}>
               <h3>Payments</h3>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableBody>
-                    {paymentsInfo.map((row, index) => (
-                      <TableRow key={index}>
-                        <TableCell component="th" scope="row">{row[0]}</TableCell>
-                        <TableCell>{row[1]}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Button onClick={(e) => handleReceipt(e, billValue)} style={{ marginTop: '1rem' }} variant="contained" color="primary">Receipt</Button>
+
+              {documentUrl && (
+                <iframe
+                  title="PDF Viewer"
+                  width="100%"
+                  height="600"
+                  src={documentUrl}
+                />
+              )}
+
+              {receiptNotFound && <p>{receiptNotFound}</p>}
+
+              <Button
+                onClick={(e) => handleReceipt(e, billValue)}
+                style={{ marginTop: '1rem' }}
+                variant="contained"
+                color="primary"
+                disabled={loadingReceipt} // Disable button while loading
+              >
+                {loadingReceipt ? <><CircularProgress size={28} /> <span style={{ marginLeft: '10px' }}>Loading...</span> </> : 'View Receipt'}
+              </Button>
             </div>
           </div>
         </DialogContent>

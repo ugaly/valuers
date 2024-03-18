@@ -1,44 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
+import AuthService from '../../services/auth/auth_service';
 
-const CppTable = ({ }) => {
+const CppTable = ({ data }) => {
+    console.log(data)
     const [searchText, setSearchText] = useState('');
-    const [loading, setLoading] = React.useState(false);
+    const [cppInfo, setCppInfo] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const fetchCppInfo = async () => {
+            setLoading(true);
+            try {
+                const response = await AuthService.getCpp(data.regnNo);
+                setCppInfo(response.data.content);
+            } catch (error) {
+                setError('Error fetching CPP data');
+                console.error('Error fetching CPP data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCppInfo();
+    }, [data.regnNo]);
 
     const handleSearchChange = (event) => {
         setSearchText(event.target.value);
     };
 
     const handleButtonClick = () => {
-        setLoading(true); // Show loader when button is clicked
-        // Simulate an action that takes 3 seconds (e.g., API call)
-        setTimeout(() => {
-            setLoading(false); // Hide loader after 3 seconds
-        }, 3000);
+        // Handle button click action here, if needed
     };
-
-    const cppInfo = [
-        {
-            ProgramSource: 'Online',
-            NoOfPoints: 100,
-            IssuedDate: '2022-03-15',
-        },
-        {
-            ProgramSource: 'In-Person',
-            NoOfPoints: 85,
-            IssuedDate: '2022-02-20',
-        },
-        // Add more sample data as needed
-    ];
 
     // Filter cppInfo based on search text
     const filteredInfo = cppInfo.filter((info) =>
-        info.ProgramSource.toLowerCase().includes(searchText.toLowerCase())
+        info.programeSource.toLowerCase().includes(searchText.toLowerCase())
     );
+
+    function formatDateTime(dateTimeString) {
+        const options = {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+        };
+
+        const formattedDateTime = new Date(dateTimeString).toLocaleString('en-US', options);
+        return formattedDateTime;
+    }
 
     return (
         <div>
@@ -68,26 +84,30 @@ const CppTable = ({ }) => {
                     </Button>
                 </div>
             </div>
-            <TableContainer component={Paper}>
-                <Table aria-label="cpp info table" className='py-3'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Program Source</TableCell>
-                            <TableCell>No of Points</TableCell>
-                            <TableCell>Issued Date</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredInfo.map((info, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{info.ProgramSource}</TableCell>
-                                <TableCell>{info.NoOfPoints}</TableCell>
-                                <TableCell>{info.IssuedDate}</TableCell>
+            {error ? (
+                <div>Error: {error}</div>
+            ) : (
+                <TableContainer component={Paper} style={{boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'}}>
+                    <Table aria-label="cpp info table" className='py-3'>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Program Source</TableCell>
+                                <TableCell>No of Points</TableCell>
+                                <TableCell>Issued Date</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {filteredInfo.map((info, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>{info.programeSource}</TableCell>
+                                    <TableCell>{info.noOfPoint}</TableCell>
+                                    <TableCell>{formatDateTime(info.issuedDate)}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
         </div>
     );
 };
