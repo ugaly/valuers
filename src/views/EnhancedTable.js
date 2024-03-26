@@ -554,82 +554,83 @@ export default function EnhancedTable({ onClickItem }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {filteredRows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  No data available
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    key={row.id}
-                    hover
-
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    selected={isItemSelected}
-                  >
-
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        onClick={(event) => handleClick(event, row.id)}
-                        checked={isItemSelected}
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
-                    </TableCell>
-                    <TableCell  >{index + 1}</TableCell>
-                    <TableCell
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                      onClick={(e) => { handleBill(e, row) }}
-                      style={{ fontSize: '16px', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }} component="th" id={labelId} scope="row" padding="none">
-                      {row.billId}
-                    </TableCell>
-                    <TableCell style={{ fontSize: '16px' }}  >{row.pyrName}</TableCell>
-                    <TableCell style={{ fontSize: '16px' }} >{row.pyrCellNum}</TableCell>
-                    <TableCell style={{ fontSize: '16px', color: 'green' }} >{row.payCntrNum}</TableCell>
-                    <TableCell style={{ fontSize: '16px' }}>{formatDateTime(row.createdTime)}</TableCell>
-                    <TableCell style={{ fontSize: '16px' }}>{formatAmount(row.billAmt)}</TableCell>
-                    {/* <TableCell style={{ fontSize: '16px' }}>{row.billDesc}</TableCell> */}
-                    <TableCell style={{ fontSize: '16px' }}>
-                      {row.billDesc.length > 15 ? `${row.billDesc.slice(0, 15)}...` : row.billDesc}
-                    </TableCell>
-
-                    {/* <TableCell style={{ fontSize: '1rem' }}>
-                      <Button onClick={(e) => { handleClickOpenConfirm(e, row.billId) }} variant="contained" className="btn btn-danger bg-danger"
-                      // startIcon={<CancelIcon />} 
-                      style={{ fontSize: '14px', backgroundColor: '#ff272e' }}>Cancel</Button>
-                      {row.deleted === true && <span style={{ color: 'red' }}>(Deleted)</span>}
-                      </TableCell> */}
-
-                    <TableCell style={{ fontSize: '16px' }}>
-                      {!row.deleted && (  // Only render the button if row.deleted is not true
-                        <Button
-                          onClick={(e) => { handleClickOpenConfirm(e, row.billId) }}
-                          variant="contained"
-                          className="btn btn-danger bg-danger"
-                          style={{ fontSize: '14px', backgroundColor: '#ff272e' }}
-                        >
-                          Cancel
-                        </Button>
-                      )}
-                      {row.deleted && (
-                        <span style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px' }}>Not Active</span>
-                      )}
-                    </TableCell>
-
-
-                  </TableRow>
-                );
-              })}
+                  return (
+                    <TableRow
+                      key={row.id}
+                      hover
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          onClick={(event) => handleClick(event, row.id)}
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={(e) => handleBill(e, row)}
+                        style={{ fontSize: '16px', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }}
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row.billId}
+                      </TableCell>
+                      <TableCell style={{ fontSize: '16px' }}>{row.pyrName}</TableCell>
+                      <TableCell style={{ fontSize: '16px' }}>{row.pyrCellNum}</TableCell>
+                      <TableCell style={{ fontSize: '16px', color: 'green' }}>{row.payCntrNum}</TableCell>
+                      <TableCell style={{ fontSize: '16px' }}>{formatDateTime(row.createdTime)}</TableCell>
+                      <TableCell style={{ fontSize: '16px' }}>{formatAmount(row.billAmt)}</TableCell>
+                      <TableCell style={{ fontSize: '16px' }}>
+                        {row.billDesc.length > 15 ? `${row.billDesc.slice(0, 15)}...` : row.billDesc}
+                      </TableCell>
+                      <TableCell style={{ fontSize: '16px' }}>
+                        {!row.deleted && (
+                          <Button
+                            onClick={(e) => handleClickOpenConfirm(e, row.billId)}
+                            variant="contained"
+                            className="btn btn-danger bg-danger"
+                            style={{ fontSize: '14px', backgroundColor: '#ff272e' }}
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                        {row.deleted && (
+                          <span style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '16px' }}>Not Active</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+            )}
             {emptyRows > 0 && (
               <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
+                <TableCell colSpan={9} />
               </TableRow>
             )}
           </TableBody>
+
         </Table>
       </TableContainer>
       <TablePagination

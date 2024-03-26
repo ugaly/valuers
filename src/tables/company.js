@@ -287,90 +287,87 @@ export default function CompaniesTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {filteredRows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={10} align="center">
+                  No data available
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    key={row.id}
-                    hover
-                    onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    selected={isItemSelected}
-                  >
-
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
-                    </TableCell>
-                    <TableCell  >{index + 1}</TableCell>
-                    <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
-                      {row.registrationNo}
-                    </TableCell>
-                    <TableCell  >{row.companyName}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} >0{row.registrationDate}</TableCell>
-                    <TableCell style={{ fontSize: '1rem', color: 'green' }} >{row.location}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{(row.district)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{(row.telephone)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{row.tin}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>
-                      <IconButton onClick={handleClick1}>
-                        <MoreVertIcon />
-                      </IconButton>
-                      {/* <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                      >
-                        <MenuItem onClick={(e) => { handleClickOpenConfirm(e);}}>Delete</MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>Edit</MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>View</MenuItem>
-                      </Menu> */}
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                      >
-                         <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>
-                          <ListItemIcon>
-                            <VisibilityIcon fontSize="small" />
-                          </ListItemIcon>
-                          View
-                        </MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
-                          <ListItemIcon>
-                            <EditIcon fontSize="small" />
-                          </ListItemIcon>
-                          Edit
-                        </MenuItem>
-                        <MenuItem onClick={handleClickOpenConfirm}>
-                          <ListItemIcon>
-                            <DeleteIcon fontSize="small" />
-                          </ListItemIcon>
-                          Delete
-                        </MenuItem>
-                      
-                       
-                      </Menu>
-                    </TableCell>
-                  </TableRow>
-
-                );
-              })}
+                  return (
+                    <TableRow
+                      key={row.id}
+                      hover
+                     
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          onClick={(event) => handleClick(event, row.id)}
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
+                        {row.registrationNo}
+                      </TableCell>
+                      <TableCell>{row.companyName}</TableCell>
+                      <TableCell style={{ fontSize: '1rem' }}>0{row.registrationDate}</TableCell>
+                      <TableCell style={{ fontSize: '1rem', color: 'green' }}>{row.location}</TableCell>
+                      <TableCell style={{ fontSize: '1rem' }}>{row.district}</TableCell>
+                      <TableCell style={{ fontSize: '1rem' }}>{row.telephone}</TableCell>
+                      <TableCell style={{ fontSize: '1rem' }}>{row.tin}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={handleClick1}>
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          anchorEl={anchorEl}
+                          open={Boolean(anchorEl)}
+                          onClose={handleClose}
+                        >
+                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>
+                            <ListItemIcon>
+                              <VisibilityIcon fontSize="small" />
+                            </ListItemIcon>
+                            View
+                          </MenuItem>
+                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                            <ListItemIcon>
+                              <EditIcon fontSize="small" />
+                            </ListItemIcon>
+                            Edit
+                          </MenuItem>
+                          <MenuItem onClick={handleClickOpenConfirm}>
+                            <ListItemIcon>
+                              <DeleteIcon fontSize="small" />
+                            </ListItemIcon>
+                            Delete
+                          </MenuItem>
+                        </Menu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+            )}
             {emptyRows > 0 && (
               <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
+                <TableCell colSpan={10} />
               </TableRow>
             )}
           </TableBody>
+
         </Table>
       </TableContainer>
       <TablePagination

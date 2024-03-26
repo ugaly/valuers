@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import AuthService from '../../services/auth/auth_service';
 
 const CppTable = ({ data }) => {
-    console.log(data)
+   
     const [searchText, setSearchText] = useState('');
     const [cppInfo, setCppInfo] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -16,7 +16,8 @@ const CppTable = ({ data }) => {
         const fetchCppInfo = async () => {
             setLoading(true);
             try {
-                const response = await AuthService.getCpp(data.regnNo);
+                const response = await AuthService.getCpp(data.id);
+                console.log('response',response.data.content);
                 setCppInfo(response.data.content);
             } catch (error) {
                 setError('Error fetching CPP data');

@@ -123,7 +123,7 @@ export const getSidebarNavItems = () => {
         },
         {
           title: "Reg. Category",
-          to: "/evrb/reg-category",
+          to: "/evrb/registration-category",
           htmlBefore: '<i class="material-icons">business</i>',
         },
       ],

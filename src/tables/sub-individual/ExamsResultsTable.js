@@ -12,7 +12,7 @@ const ExamsResultsTable = ({ data }) => {
 
     useEffect(() => {
         setLoading(true); // Show loader while fetching data
-        AuthService.getExamResults(data.regnNo)
+        AuthService.getExamResults(data.id)
             .then((response) => {
                 console.log(response.data);
                 setExamsResults(response.data.content); // Update state with fetched data

@@ -62,7 +62,7 @@ const headCells = [
   { id: 'last_time', label: 'last_time' },
   { id: 'createdBy', label: 'createdBy' },
   { id: 'spReconcReqId', label: 'spReconcReqId' },
- 
+
   { id: 'reconcStsCode', label: 'reconcStsCode' },
   { id: 'reconcOpt', label: 'reconcOpt' },
   { id: 'tnxDt', label: 'tnxDt' },
@@ -151,15 +151,15 @@ export default function ReconciliationTable() {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-//   const filteredRows = rows.filter(row =>
-//     row.spReconcReqId.toLowerCase().includes(searchQuery.toLowerCase())
-    
-//   );
+  //   const filteredRows = rows.filter(row =>
+  //     row.spReconcReqId.toLowerCase().includes(searchQuery.toLowerCase())
 
- const filteredRows = rows.filter(row =>
-  String(row.spReconcReqId).toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+
+  const filteredRows = rows.filter(row =>
+    String(row.spReconcReqId).toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
+
 
 
   function formatDateTime(dateTimeString) {
@@ -282,104 +282,84 @@ export default function ReconciliationTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {filteredRows.length === 0 ? ( // Check if filteredRows is empty
+              <TableRow>
+                <TableCell colSpan={9} align="center">
+                  No data available
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-
-
-             
-
-
-                  <TableRow
-                    key={row.id}
-                    hover
-                    onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    selected={isItemSelected}
-                  >
-
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
-                    </TableCell>
-                    <TableCell  >{index + 1}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} component="th" id={labelId} scope="row" padding="none">
-                      {formatDateTime(row.last_time)}
-                    </TableCell>
-                    <TableCell  >{row.createdBy}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} >{row.spReconcReqId}</TableCell>
-                   
-                    <TableCell style={{ fontSize: '1rem' }}>{(row.reconcStsCode)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{(row.reconcOpt)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>
-
-                      {row.tnxDt}
-
-                    </TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>
-                      {/* <Button onClick={(e)=>e.stopPropagation()} variant="contained" className="btn btn-danger bg-danger" startIcon={<CancelIcon />} style={{ fontSize: '16px', backgroundColor: '#ff272e' }}>Cancel</Button> */}
-
-                      <IconButton onClick={handleClick1}>
-                        <MoreVertIcon />
-                      </IconButton>
-                      {/* <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                      >
-                        <MenuItem onClick={(e) => {e.stopPropagation(); handleClickOpenConfirm(e);}}>Delete</MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>Edit</MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>View</MenuItem>
-                      </Menu> */}
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                      >
-                       
-                        <MenuItem onClick={(e) => { e.stopPropagation();   handleClose(); handleClickOpen(); }}>
-                          <ListItemIcon>
-                            <VisibilityIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="View" />
-                        </MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
-                          <ListItemIcon>
-                            <EditIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="Edit" />
-                        </MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpenConfirm(e); }}>
-                          <ListItemIcon>
-                            <DeleteIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="Delete" />
-                        </MenuItem>
-                       
-                      </Menu>
-                    </TableCell>
-                  </TableRow>
-
-
-
-
-                );
-              })}
+                  return (
+                    <TableRow
+                      key={row.id}
+                      hover
+                      
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          onClick={(event) => handleClick(event, row.id)}
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{formatDateTime(row.last_time)}</TableCell>
+                      <TableCell>{row.createdBy}</TableCell>
+                      <TableCell>{row.spReconcReqId}</TableCell>
+                      <TableCell>{row.reconcStsCode}</TableCell>
+                      <TableCell>{row.reconcOpt}</TableCell>
+                      <TableCell>{row.tnxDt}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={handleClick1}>
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          anchorEl={anchorEl}
+                          open={Boolean(anchorEl)}
+                          onClose={handleClose}
+                        >
+                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); handleClickOpen(); }}>
+                            <ListItemIcon>
+                              <VisibilityIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText primary="View" />
+                          </MenuItem>
+                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                            <ListItemIcon>
+                              <EditIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText primary="Edit" />
+                          </MenuItem>
+                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpenConfirm(e); }}>
+                            <ListItemIcon>
+                              <DeleteIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText primary="Delete" />
+                          </MenuItem>
+                        </Menu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+            )}
             {emptyRows > 0 && (
               <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
+                <TableCell colSpan={9} />
               </TableRow>
             )}
           </TableBody>
+
         </Table>
       </TableContainer>
       <TablePagination

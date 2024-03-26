@@ -80,14 +80,13 @@ const headCells = [
   { id: 'regnNo', label: 'regnNo' },
   { id: 'firstName', label: 'firstName' },
   { id: 'middleName', label: 'middleName' },
-  { id: 'certificateNo', label: 'certificateNo' },
+  { id: 'lastName', label: 'lastName' },
   { id: 'membershipType', label: 'membershipType' },
-  { id: 'telephone', label: 'telephone' },
-  { id: 'status', label: 'status' },
-  { id: 'action', label: 'action' },
+  { id: 'stage', label: 'stage' },
+  { id: 'message', label: 'message' },
 ];
 
-export default function IndividualsTable({onClickItem}) {
+export default function IndividualsTable({ onClickItem }) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -108,6 +107,7 @@ export default function IndividualsTable({onClickItem}) {
       // }, 1000);
 
       if (res && res.data && res.data.content) {
+        console.log(res.data.content);
         setRows(res.data.content);
       } else {
         // Handle the case where the response structure is not as expected
@@ -199,7 +199,7 @@ export default function IndividualsTable({onClickItem}) {
     setTimeout(() => {
       setLoading(false);
     }, 3000);
-    
+
   }
 
 
@@ -247,26 +247,26 @@ export default function IndividualsTable({onClickItem}) {
 
   const handleClickItem = (e, item_data) => {
     e.stopPropagation();
-   onClickItem(item_data)
+    onClickItem(item_data)
   }
 
 
 
   return (
-  <>
-    <Paper>
-      <Toolbar className="d-flex justify-content-between mt-3 pb-2">
-        <div style={{ width: '50%' }}>
-          <TextField
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            variant="outlined"
-            fullWidth
-          />
-        </div>
-        <div className="d-flex align-items-center">
+    <>
+      <Paper>
+        <Toolbar className="d-flex justify-content-between mt-3 pb-2">
+          <div style={{ width: '50%' }}>
+            <TextField
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              variant="outlined"
+              fullWidth
+            />
+          </div>
+          {/* <div className="d-flex align-items-center">
           <IconButton  onClick={() => handleLoading()} disabled={loading} color="primary" size="large" className="mx-2">
             <RefreshIcon  />
           </IconButton>
@@ -274,181 +274,168 @@ export default function IndividualsTable({onClickItem}) {
           <Button disabled={loading} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px', }}>
             Add Individual
           </Button>
-        </div>
-      </Toolbar>
+        </div> */}
+        </Toolbar>
 
-      <TableContainer>
-        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                  indeterminate={selected.length > 0 && selected.length < filteredRows.length}
-                  checked={filteredRows.length > 0 && selected.length === filteredRows.length}
-                  onChange={handleSelectAllClick}
-                />
-              </TableCell>
-              {headCells.map((headCell) => (
-                <TableCell
-                  style={{ fontSize: '1.1rem' }}
-                  key={headCell.id}
-                  sortDirection={orderBy === headCell.id ? order : false}
-                >
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={(event) => handleRequestSort(event, headCell.id)}
-                  >
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                      <Box component="span" sx={{ ...visuallyHidden }}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                      </Box>
-                    ) : null}
-                  </TableSortLabel>
+        <TableContainer>
+          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    color="primary"
+                    indeterminate={selected.length > 0 && selected.length < filteredRows.length}
+                    checked={filteredRows.length > 0 && selected.length === filteredRows.length}
+                    onChange={handleSelectAllClick}
+                  />
                 </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
-                return (
-                  <TableRow
-                    key={row.id}
-                    hover
-                    
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    selected={isItemSelected}
+                {headCells.map((headCell) => (
+                  <TableCell
+                    style={{ fontSize: '1.1rem' }}
+                    key={headCell.id}
+                    sortDirection={orderBy === headCell.id ? order : false}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                      onClick={(event) => handleClick(event, row.id)}
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
-                    </TableCell>
-                    <TableCell  >{index + 1}</TableCell>
-                    <TableCell
-                     onMouseEnter={handleMouseEnter}
-                     onMouseLeave={handleMouseLeave}
-                     onClick={(e) => handleClickItem(e,row)}
-                     style={{ fontSize: '1rem', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }}
-                      >{row.regnNo}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} component="th" id={labelId} scope="row" padding="none">
-                      {row.firstName}
-                    </TableCell>
-                    <TableCell  >{row.middleName}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }} >{row.certificateNo}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{(row.membershipType)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>{(row.telephone)}</TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>
-
-                      {row.status}
-
-                    </TableCell>
-                    <TableCell style={{ fontSize: '1rem' }}>
-                      {/* <Button onClick={(e)=>e.stopPropagation()} variant="contained" className="btn btn-danger bg-danger" startIcon={<CancelIcon />} style={{ fontSize: '16px', backgroundColor: '#ff272e' }}>Cancel</Button> */}
-
-                      <IconButton onClick={handleClick1}>
-                        <MoreVertIcon />
-                      </IconButton>
-                      {/* <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                      >
-                        <MenuItem onClick={(e) => {e.stopPropagation(); handleClickOpenConfirm(e);}}>Delete</MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>Edit</MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>View</MenuItem>
-                      </Menu> */}
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                      >
-                       
-                        <MenuItem onClick={(e) => { e.stopPropagation();  handleClose(); handleClickItem(e,row);  }}>
-                          <ListItemIcon>
-                            <VisibilityIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="View" />
-                        </MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
-                          <ListItemIcon>
-                            <EditIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="Edit" />
-                        </MenuItem>
-                        <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpenConfirm(e); }}>
-                          <ListItemIcon>
-                            <DeleteIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="Delete" />
-                        </MenuItem>
-                       
-                      </Menu>
-                    </TableCell>
-                  </TableRow>
-
-
-
-
-                );
-              })}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={(event) => handleRequestSort(event, headCell.id)}
+                    >
+                      {headCell.label}
+                      {orderBy === headCell.id ? (
+                        <Box component="span" sx={{ ...visuallyHidden }}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        style={{ fontSize: '1rem', fontWeight: 'bold', marginTop: '10px' }}
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredRows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+            </TableHead>
+            <TableBody>
+              {filteredRows.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={10} align="center">
+                    No data available
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredRows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
+
+                    return (
+                      <TableRow
+                        key={row.id}
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        selected={isItemSelected}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            onClick={(event) => handleClick(event, row.id)}
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
+                        </TableCell>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell
+                          onMouseEnter={handleMouseEnter}
+                          onMouseLeave={handleMouseLeave}
+                          onClick={(e) => handleClickItem(e, row)}
+                          style={{ fontSize: '1rem', color: 'blue', cursor: 'pointer', fontWeight: 'bold' }}
+                        >
+                          {row.regnNo}
+                        </TableCell>
+                        <TableCell>{row.firstName}</TableCell>
+                        <TableCell>{row.middleName}</TableCell>
+                        <TableCell>{row.surName}</TableCell>
+                        <TableCell>{row.membershipType}</TableCell>
+                        <TableCell>{row.stage}</TableCell>
+                        <TableCell>{row.message}</TableCell>
+                        <TableCell>
+                          <IconButton onClick={handleClick1}>
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                          >
+                            <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); handleClickItem(e, row); }}>
+                              <ListItemIcon>
+                                <VisibilityIcon fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText primary="View" />
+                            </MenuItem>
+                            <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                              <ListItemIcon>
+                                <EditIcon fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText primary="Edit" />
+                            </MenuItem>
+                            <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpenConfirm(e); }}>
+                              <ListItemIcon>
+                                <DeleteIcon fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText primary="Delete" />
+                            </MenuItem>
+                          </Menu>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+              )}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={10} />
+                </TableRow>
+              )}
+            </TableBody>
+
+          </Table>
+        </TableContainer>
+        <TablePagination
+          style={{ fontSize: '1rem', fontWeight: 'bold', marginTop: '10px' }}
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredRows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
 
 
 
 
 
 
-      <Dialog
-        open={openConfirm}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleCloseConfirm}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle>{`Hello ${sessionStorage.getItem('username')}`}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            Are you sure you want to delete this record from the database?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Disagree</Button>
-          <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
-   
- 
-   </>
+        <Dialog
+          open={openConfirm}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleCloseConfirm}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle>{`Hello ${sessionStorage.getItem('username')}`}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              Are you sure you want to delete this record from the database?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Disagree</Button>
+            <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+
+
+    </>
   );
 }

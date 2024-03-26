@@ -14,7 +14,7 @@ const AcademicInfoTable = ({ data }) => {
     const fetchAcademicInfo = async () => {
       setLoading(true);
       try {
-        const response = await AuthService.getAcademicResultsInfo(data.regnNo);
+        const response = await AuthService.getAcademicResultsInfo(data.id);
         setAcademicInfo(response.data.content);
       } catch (error) {
         console.error('Error fetching academic info:', error);

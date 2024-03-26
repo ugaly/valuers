@@ -13,8 +13,12 @@ import ComponentsOverview from "./views/ComponentsOverview";
 import Tables from "./views/Tables";
 import BlogPosts from "./views/BlogPosts";
 import Company from "./views/Company";
+import Particulars from "./views/Particulars";
 import Individual from "./views/Individual";
 import Reconciliation from "./views/Reconciliation";
+import Subjects from "./views/Subjects";
+import RegCategory from "./views/RegCategory";
+import Cpp from "./views/Cpp"
 
 export default [
   {
@@ -61,6 +65,12 @@ export default [
   },
 
   {
+    path: "/evrb/particulars",
+    layout: DefaultLayout,
+    component: Particulars
+  },
+
+  {
     path: "/evrb/companies",
     layout: DefaultLayout,
     component: Company
@@ -70,6 +80,27 @@ export default [
     path: "/evrb/reconciliation",
     layout: DefaultLayout,
     component: Reconciliation
+  },
+
+
+
+
+  {
+    path: "/evrb/subjects",
+    layout: DefaultLayout,
+    component: Subjects
+  },
+
+  {
+    path: "/evrb/cpp",
+    layout: DefaultLayout,
+    component: Cpp
+  },
+
+  {
+    path: "/evrb/registration-category",
+    layout: DefaultLayout,
+    component: RegCategory
   },
   
   // {
