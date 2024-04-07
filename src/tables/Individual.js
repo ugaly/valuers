@@ -91,7 +91,7 @@ export default function IndividualsTable({ onClickItem }) {
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [rows, setRows] = useState([]);
@@ -372,7 +372,7 @@ export default function IndividualsTable({ onClickItem }) {
                               </ListItemIcon>
                               <ListItemText primary="View" />
                             </MenuItem>
-                            <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                            {/* <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
                               <ListItemIcon>
                                 <EditIcon fontSize="small" />
                               </ListItemIcon>
@@ -383,7 +383,7 @@ export default function IndividualsTable({ onClickItem }) {
                                 <DeleteIcon fontSize="small" />
                               </ListItemIcon>
                               <ListItemText primary="Delete" />
-                            </MenuItem>
+                            </MenuItem> */}
                           </Menu>
                         </TableCell>
                       </TableRow>
