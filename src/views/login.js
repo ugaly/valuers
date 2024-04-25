@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InputText from '../components/login/InputText';
 import ErrorText from '../components/login/ErrorText';
 import CircularProgress from '@mui/material/CircularProgress';
-import logo from '../assets/logo.png';
+import logo from '../assets/dd.png';
 import AuthService from '../services/auth/auth_service';
 import { jwtDecode } from "jwt-decode";
 
@@ -78,7 +78,8 @@ export function Login() {
                     <div className="row justify-content-center">
                         <div className="col-md-12 col-lg-10">
                             <div className="wrap d-md-flex">
-                                <div className="img" style={{ backgroundImage: `url(${logo})`, backgroundColor: '#f2f2f2',backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'  }}>
+                                <div className="img" style={{ backgroundImage: `url(${logo})`, backgroundColor: '#ffffff',backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'  }}>
+                        
                                 </div>
                                 <div className="login-wrap p-4 p-md-5">
                                     <div className="d-flex">

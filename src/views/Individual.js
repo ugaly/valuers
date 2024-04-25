@@ -68,7 +68,7 @@ const Individual = () => {
                     <Tab value="Reg Info" label="Reg Info" />
                     <Tab value="Exams Results" label="Exams Results" />
                     <Tab value="Academic Info" label="Academic Info" />
-                    <Tab value="CPP" label="CPP" />
+                    <Tab value="CPD" label="CPD" />
                     <Tab value="Certificates" label="Certificates" />
                     <Tab value="Remarks" label="Remarks" />
                   </Tabs>
@@ -77,7 +77,7 @@ const Individual = () => {
                   {activeTab === 'Reg Info' && <RegInfo data={data}/>}
                   {activeTab === 'Exams Results' && <ExamsResultsTable data={data}/>}
                   {activeTab === 'Academic Info' && <AcademicInfoTable data={data}/>}
-                  {activeTab === 'CPP' && <CppTable data={data}/>}
+                  {activeTab === 'CPD' && <CppTable data={data}/>}
                   {activeTab === 'Certificates' && <Certificate data={data}/>}
                   {activeTab === 'Remarks' && <RemarkTable data={data}/>}
                 </CardBody>
