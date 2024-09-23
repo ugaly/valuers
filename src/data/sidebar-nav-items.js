@@ -108,6 +108,14 @@ export const getSidebarNavItems = () => {
 
 
     {
+      title: "Documents",
+      to: "/evrb/documents",
+      htmlBefore: '<i style="font-size: 22px" class="material-icons">speed</i>',
+      htmlAfter: ""
+    },
+
+
+    {
       title: "SETUPS",
       htmlBefore: '<i style="font-size: 22px" class="material-icons">person_add</i>',
       items: [
@@ -117,7 +125,7 @@ export const getSidebarNavItems = () => {
           htmlBefore: '<i class="material-icons">person</i>',
         },
         {
-          title: "Cpp",
+          title: "Cpd",
           to: "/evrb/cpp",
           htmlBefore: '<i class="material-icons">business</i>',
         },
@@ -128,6 +136,9 @@ export const getSidebarNavItems = () => {
         },
       ],
     },
+
+
+    
 
 
   ];

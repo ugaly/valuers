@@ -52,24 +52,7 @@ function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, Bi
   return { id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, BillAmt, BillDesc };
 }
 
-// Sample data
-// const rows = [
-//   createData(1, 'VRB-069392995492912823', 'VRB', 769446533, 134344343444, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(2, 'VRB-869392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00','Full Registration Fee'),
-//   createData(3, 'VRB-5769392995492912823', 'JARIB', 769446533, 134344343444, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(4, 'VRB-3769392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(5, 'VRB-9769392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(6, 'VRB-469392995492912823', 'VRB', 769446533, 134344343444, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(7, 'VRB-269392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00','Full Registration Fee'),
-//   createData(8, 'VRB-1769392995492912823', 'JARIB', 769446533, 134344343444, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(9, 'VRB-7769392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(10, 'VRB-9769392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(11, 'VRB-669392995492912823', 'VRB', 769446533, 134344343444, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(12, 'VRB-869392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00','Full Registration Fee'),
-//   createData(13, 'VRB-1769392995492912823', 'JARIB', 769446533, 134344343444, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(14, 'VRB-3769392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-//   createData(15, 'VRB-22769392995492912823', 'JARIB', 769446533, 96576776677, '2024-03-03T08:41:40.302+00:00', '10,000.00', 'Full Registration Fee'),
-// ];
+
 
 const headCells = [
   { id: 'counter', label: '#' },
@@ -88,7 +71,7 @@ export default function EnhancedTable({ onClickItem }) {
   const [orderBy, setOrderBy] = React.useState('billId');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(160);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [rows, setRows] = useState([]);
@@ -156,7 +139,7 @@ export default function EnhancedTable({ onClickItem }) {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value, 160));
     setPage(0);
   };
 

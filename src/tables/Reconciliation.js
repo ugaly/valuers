@@ -59,7 +59,6 @@ function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, Bi
 
 const headCells = [
   { id: 'counter', label: '#' },
-  { id: 'last_time', label: 'last_time' },
   { id: 'createdBy', label: 'createdBy' },
   { id: 'spReconcReqId', label: 'spReconcReqId' },
 
@@ -314,7 +313,6 @@ export default function ReconciliationTable() {
                         />
                       </TableCell>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{formatDateTime(row.last_time)}</TableCell>
                       <TableCell>{row.createdBy}</TableCell>
                       <TableCell>{row.spReconcReqId}</TableCell>
                       <TableCell>{row.reconcStsCode}</TableCell>
@@ -335,7 +333,7 @@ export default function ReconciliationTable() {
                             </ListItemIcon>
                             <ListItemText primary="View" />
                           </MenuItem>
-                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                          {/* <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
                             <ListItemIcon>
                               <EditIcon fontSize="small" />
                             </ListItemIcon>
@@ -346,7 +344,7 @@ export default function ReconciliationTable() {
                               <DeleteIcon fontSize="small" />
                             </ListItemIcon>
                             <ListItemText primary="Delete" />
-                          </MenuItem>
+                          </MenuItem> */}
                         </Menu>
                       </TableCell>
                     </TableRow>

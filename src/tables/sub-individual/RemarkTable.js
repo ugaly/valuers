@@ -183,13 +183,13 @@ const RemarkTable = ({ data }) => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <div style={{ width: '50%' }}>
-                    <TextField
+                    {/* <TextField
                         label="Search"
                         variant="outlined"
                         value={searchText}
                         onChange={handleSearchChange}
                         fullWidth
-                    />
+                    /> */}
                 </div>
                 <div className="d-flex align-items-center">
                     <IconButton onClick={handleButtonClick} color="primary" size="large" disabled={loading}>
@@ -220,13 +220,19 @@ const RemarkTable = ({ data }) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredInfo.map((info, index) => (
+                            {/* {filteredInfo.map((info, index) => (
                                 <TableRow key={index}>
                                     <TableCell></TableCell>
                                     <TableCell></TableCell>
                                     <TableCell></TableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
+
+                            <TableRow >
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -243,7 +249,7 @@ const RemarkTable = ({ data }) => {
                     maxHeight: '80vh', // Adjust the max height as needed
                     overflowY: 'auto'
                 }}
-               
+
             >
                 <Box
                     sx={{

@@ -24,6 +24,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 import CancelIcon from '@mui/icons-material/Cancel';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+
 import EditIcon from '@mui/icons-material/Edit';
 
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -32,9 +33,15 @@ import ListItemText from '@mui/material/ListItemText';
 
 
 
+import { Alert, FormControl } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
 
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
+
+
+
 
 
 
@@ -59,6 +66,7 @@ import AppBar from '@mui/material/AppBar';
 
 
 import AuthService from '../services/auth/auth_service';
+import { DatePicker } from 'shards-react';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -86,36 +94,70 @@ export default function CompaniesTable() {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = React.useState(1);
+  const [rowsPerPage, setRowsPerPage] = React.useState(40);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [rows, setRows] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  
+
 
 
   useEffect(() => {
-    AuthService.getCompany().then((res) => {
-      // console.log(res.data.content);
-      // setRows(res.data.content);
-      // setTimeout(() => {
-      //   setLoading(false);
-      // }, 3000);
+    fetchData();
+  }, [page, rowsPerPage, searchQuery]);
 
 
-      if (res && res.data && res.data.content) {
+
+  const fetchData = () => {
+    setLoading(true);
+    AuthService.getCompany(page, rowsPerPage, searchQuery)
+      .then((res) => {
+        console.log(res);
         setRows(res.data.content);
-      } else {
-        // Handle the case where the response structure is not as expected
-        console.error("Invalid response format from API");
-      }
-      setTimeout(function () {
+        setTotalPages(res.data.totalPages);
+
+        // if (res && res.data && res.data.content) {
+        //   setRows(res.data.content);
+        //   setTotalPages(res.data.totalPages);
+        // } else {
+        //   console.error("Invalid response format from API");
+        // }
         setLoading(false);
-      }, 1000);
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  };
+  
+
+  // useEffect(() => {
+    
+  //   AuthService.getCompany(rowsPerPage).then((res) => {
+  //      console.log(res.data);
+  //     // console.log(res.data.content);
+  //     // setRows(res.data.content);
+  //     // setTimeout(() => {
+  //     //   setLoading(false);
+  //     // }, 3000);
+
+
+  //     if (res && res.data && res.data.content) {
+  //       setRows(res.data.content);
+  //     } else {
+  //       // Handle the case where the response structure is not as expected
+  //       console.error("Invalid response format from API");
+  //     }
+  //     setTimeout(function () {
+  //       setLoading(false);
+  //     }, 1000);
 
 
 
-    })
-  }, [])
+  //   })
+  // }, [])
 
 
   const handleRequestSort = (event, property) => {
@@ -157,7 +199,7 @@ export default function CompaniesTable() {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value,60));
     setPage(0);
   };
 
@@ -228,6 +270,14 @@ export default function CompaniesTable() {
   };
 
 
+  const [openAdd, setOpenAdd] = React.useState(false);
+
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
+  };
+
+
+
   return (
     <Paper>
       <Toolbar className="d-flex justify-content-between mt-3 pb-2">
@@ -246,7 +296,7 @@ export default function CompaniesTable() {
             <RefreshIcon />
           </IconButton>
           {loading && <CircularProgress size={24} />}
-          <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+          <Button onClick={(e) => setOpenAdd(true)} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
             Add Company
           </Button>
         </div>
@@ -290,12 +340,12 @@ export default function CompaniesTable() {
             {filteredRows.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={10} align="center">
-                  No data available
+                <CircularProgress />
                 </TableCell>
               </TableRow>
             ) : (
               filteredRows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -349,12 +399,12 @@ export default function CompaniesTable() {
                             </ListItemIcon>
                             Edit
                           </MenuItem>
-                          <MenuItem onClick={handleClickOpenConfirm}>
+                          {/* <MenuItem onClick={handleClickOpenConfirm}>
                             <ListItemIcon>
                               <DeleteIcon fontSize="small" />
                             </ListItemIcon>
                             Delete
-                          </MenuItem>
+                          </MenuItem> */}
                         </Menu>
                       </TableCell>
                     </TableRow>
@@ -412,6 +462,7 @@ export default function CompaniesTable() {
       </Dialog>
 
 
+
       <Dialog
         open={openConfirm}
         TransitionComponent={Transition}
@@ -430,6 +481,380 @@ export default function CompaniesTable() {
           <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
         </DialogActions>
       </Dialog>
+
+
+
+
+
+
+
+
+      <Dialog TransitionComponent={Transition} open={openAdd} onClose={handleCloseAdd} fullWidth maxWidth="xl">
+  <DialogTitle>Add company</DialogTitle>
+  <DialogContent>
+
+    <TextField
+      fullWidth
+      label="Company Name"
+      name="companyName"
+      sx={{ marginBottom: 2 }}
+    />
+    {/* <DatePicker 
+      fullWidth
+      label="Registration Date"
+      name="registrationDate"
+      sx={{ marginBottom: 2 }}
+    /> */}
+
+
+<TextField
+      fullWidth
+      label="Registration Date"
+      name="companyName"
+      sx={{ marginBottom: 2 }}
+    />
+
+
+      <FormControl fullWidth sx={{ marginBottom: 2, marginTop: 2 }}>
+            <InputLabel>Location</InputLabel>
+            <Select
+              fullWidth
+              // value={formData.particularName}
+              // onChange={handleChange}
+              name="particularName"
+            >
+              <MenuItem value="1">Mbeya</MenuItem>
+              <MenuItem value="1">Arusha</MenuItem>
+              <MenuItem value="1">Mwanza</MenuItem>
+            </Select>
+          </FormControl>
+
+
+          <FormControl fullWidth sx={{ marginBottom: 2, marginTop: 2 }}>
+            <InputLabel>District</InputLabel>
+            <Select
+              fullWidth
+              // value={formData.particularName}
+              // onChange={handleChange}
+              name="particularName"
+            >
+              <MenuItem value="1">District</MenuItem>
+              <MenuItem value="1">District</MenuItem>
+              <MenuItem value="1">District</MenuItem>
+            </Select>
+          </FormControl>
+   
+   
+    <TextField
+      fullWidth
+      label="Telephone"
+      name="telephone"
+      sx={{ marginBottom: 2 }}
+    />
+    <TextField
+      fullWidth
+      label="TIN"
+      name="tin"
+      sx={{ marginBottom: 2 }}
+    />
+
+  
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseAdd}>Cancel</Button>
+    <Button onClick={handleCloseAdd} variant="contained" color="primary">Create Company</Button>
+  </DialogActions>
+</Dialog>
+
+
+
     </Paper>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import PropTypes from 'prop-types';
+// import Box from '@mui/material/Box';
+// import Table from '@mui/material/Table';
+// import TableBody from '@mui/material/TableBody';
+// import TableCell from '@mui/material/TableCell';
+// import TableContainer from '@mui/material/TableContainer';
+// import TableHead from '@mui/material/TableHead';
+// import TablePagination from '@mui/material/TablePagination';
+// import TableRow from '@mui/material/TableRow';
+// import TableSortLabel from '@mui/material/TableSortLabel';
+// import Toolbar from '@mui/material/Toolbar';
+// import Typography from '@mui/material/Typography';
+// import Paper from '@mui/material/Paper';
+// import Checkbox from '@mui/material/Checkbox';
+// import IconButton from '@mui/material/IconButton';
+// import Tooltip from '@mui/material/Tooltip';
+// import DeleteIcon from '@mui/icons-material/Delete';
+// import FilterListIcon from '@mui/icons-material/FilterList';
+// import CircularProgress from '@mui/material/CircularProgress';
+// import { visuallyHidden } from '@mui/utils';
+// import TextField from '@mui/material/TextField';
+// import RefreshIcon from '@mui/icons-material/Refresh';
+
+// import CancelIcon from '@mui/icons-material/Cancel';
+// import VisibilityIcon from '@mui/icons-material/Visibility';
+// import EditIcon from '@mui/icons-material/Edit';
+
+// import ListItemIcon from '@mui/material/ListItemIcon';
+// import ListItemText from '@mui/material/ListItemText';
+
+// import CloseIcon from '@mui/icons-material/Close';
+// import Slide from '@mui/material/Slide';
+
+// import Dialog from '@mui/material/Dialog';
+
+// import Button from '@mui/material/Button';
+// import DialogActions from '@mui/material/DialogActions';
+// import DialogContent from '@mui/material/DialogContent';
+// import DialogContentText from '@mui/material/DialogContentText';
+// import DialogTitle from '@mui/material/DialogTitle';
+
+// import Menu from '@mui/material/Menu';
+// import MenuItem from '@mui/material/MenuItem';
+// import MoreVertIcon from '@mui/icons-material/MoreVert';
+// import AppBar from '@mui/material/AppBar';
+
+// import AuthService from '../services/auth/auth_service';
+
+// const Transition = React.forwardRef(function Transition(props, ref) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
+
+// function createData(id, registrationNo, companyName, registrationDate, location, district, telephone, tin) {
+//   return { id, registrationNo, companyName, registrationDate, location, district, telephone, tin };
+// }
+
+// const headCells = [
+//   { id: 'counter', label: '#' },
+//   { id: 'registrationNo', label: 'Registration No' },
+//   { id: 'companyName', label: 'Company Name' },
+//   { id: 'registrationDate', label: 'Registration Date' },
+//   { id: 'location', label: 'Location' },
+//   { id: 'district', label: 'District' },
+//   { id: 'telephone', label: 'Telephone' },
+//   { id: 'tin', label: 'TIN' },
+//   { id: 'action', label: 'Action' },
+// ];
+
+// export default function CompaniesTable() {
+//   const [order, setOrder] = React.useState('asc');
+//   const [orderBy, setOrderBy] = React.useState('calories');
+//   const [selected, setSelected] = React.useState([]);
+//   const [page, setPage] = React.useState(0);
+//   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+//   const [searchQuery, setSearchQuery] = React.useState('');
+//   const [loading, setLoading] = React.useState(true);
+//   const [rows, setRows] = useState([]);
+//   const [totalPages, setTotalPages] = useState(0);
+//   const [anchorEl, setAnchorEl] = useState(null);
+//   const [open, setOpen] = React.useState(false);
+//   const [openConfirm, setOpenConfirm] = React.useState(false);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       setLoading(true);
+//       try {
+//         const res = await AuthService.getCompany(page, rowsPerPage);
+//         if (res && res.data && res.data.content) {
+//           setRows(prevRows => [...prevRows, ...res.data.content]);
+//           setTotalPages(res.data.totalPages);
+//         } else {
+//           console.error("Invalid response format from API");
+//         }
+//       } catch (error) {
+//         console.error("Error fetching data:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+    
+    
+//     fetchData();
+//   }, [page, rowsPerPage]); // Trigger fetch when page or rowsPerPage changes
+
+//   const handleChangePage = (event, newPage) => {
+//     setPage(newPage);
+//   };
+
+//   const handleChangeRowsPerPage = (event) => {
+//     setRowsPerPage(parseInt(event.target.value, 10));
+//     setPage(0); // Reset page number when rowsPerPage changes
+//   };
+
+//   const handleSearchChange = (event) => {
+//     setSearchQuery(event.target.value);
+//   };
+
+//   const handleRequestSort = (event, property) => {
+//     const isAsc = orderBy === property && order === 'asc';
+//     setOrder(isAsc ? 'desc' : 'asc');
+//     setOrderBy(property);
+//   };
+
+//   const handleClick = (event, id) => {
+//     const selectedIndex = selected.indexOf(id);
+//     let newSelected = [];
+
+//     if (selectedIndex === -1) {
+//       newSelected = newSelected.concat(selected, id);
+//     } else if (selectedIndex === 0) {
+//       newSelected = newSelected.concat(selected.slice(1));
+//     } else if (selectedIndex === selected.length - 1) {
+//       newSelected = newSelected.concat(selected.slice(0, -1));
+//     } else if (selectedIndex > 0) {
+//       newSelected = newSelected.concat(
+//         selected.slice(0, selectedIndex),
+//         selected.slice(selectedIndex + 1),
+//       );
+//     }
+//     setSelected(newSelected);
+//   };
+
+//   const isSelected = (id) => selected.indexOf(id) !== -1;
+
+//   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+//   return (
+//     <Paper>
+//       <Toolbar className="d-flex justify-content-between mt-3 pb-2">
+//         <div style={{ width: '50%' }}>
+//           <TextField
+//             type="text"
+//             placeholder="Search..."
+//             value={searchQuery}
+//             onChange={handleSearchChange}
+//             variant="outlined"
+//             fullWidth
+//           />
+//         </div>
+//         <div className="d-flex align-items-center">
+//           <IconButton color="primary" size="large" className="mx-2">
+//             <RefreshIcon />
+//           </IconButton>
+//           {loading && <CircularProgress size={24} />}
+//           <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+//             Add Company
+//           </Button>
+//         </div>
+//       </Toolbar>
+
+//       <TableContainer>
+//         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+//           <TableHead>
+//             <TableRow>
+//               <TableCell padding="checkbox">
+//                 <Checkbox
+//                   color="primary"
+//                   indeterminate={selected.length > 0 && selected.length < rowsPerPage}
+//                   checked={rowsPerPage > 0 && selected.length === rowsPerPage}
+//                   //onChange={handleSelectAllClick}
+//                 />
+//               </TableCell>
+//               {headCells.map((headCell) => (
+//                 <TableCell
+//                   style={{ fontSize: '1.1rem' }}
+//                   key={headCell.id}
+//                   sortDirection={orderBy === headCell.id ? order : false}
+//                 >
+//                   <TableSortLabel
+//                     active={orderBy === headCell.id}
+//                     direction={orderBy === headCell.id ? order : 'asc'}
+//                     onClick={(event) => handleRequestSort(event, headCell.id)}
+//                   >
+//                     {headCell.label}
+//                     {orderBy === headCell.id ? (
+//                       <Box component="span" sx={{ ...visuallyHidden }}>
+//                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+//                       </Box>
+//                     ) : null}
+//                   </TableSortLabel>
+//                 </TableCell>
+//               ))}
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {loading ? (
+//               <TableRow>
+//                 <TableCell colSpan={headCells.length} align="center">
+//                   <CircularProgress />
+//                 </TableCell>
+//               </TableRow>
+//             ) : (
+//               rows.map((row, index) => {
+//                 const isItemSelected = isSelected(row.id);
+//                 const labelId = `enhanced-table-checkbox-${index}`;
+
+//                 return (
+//                   <TableRow
+//                     key={row.id}
+//                     hover
+//                     onClick={(event) => handleClick(event, row.id)}
+//                     role="checkbox"
+//                     aria-checked={isItemSelected}
+//                     tabIndex={-1}
+//                     selected={isItemSelected}
+//                   >
+//                     <TableCell padding="checkbox">
+//                       <Checkbox
+//                         color="primary"
+//                         checked={isItemSelected}
+//                         inputProps={{ 'aria-labelledby': labelId }}
+//                       />
+//                     </TableCell>
+//                     <TableCell>{index + 1}</TableCell>
+//                     <TableCell style={{ fontSize: '1rem', color: 'blue' }}>{row.registrationNo}</TableCell>
+//                     <TableCell>{row.companyName}</TableCell>
+//                     <TableCell style={{ fontSize: '1rem' }}>{row.registrationDate}</TableCell>
+//                     <TableCell style={{ fontSize: '1rem', color: 'green' }}>{row.location}</TableCell>
+//                     <TableCell style={{ fontSize: '1rem' }}>{row.district}</TableCell>
+//                     <TableCell style={{ fontSize: '1rem' }}>{row.telephone}</TableCell>
+//                     <TableCell style={{ fontSize: '1rem' }}>{row.tin}</TableCell>
+//                     <TableCell>
+//                       {/* Action buttons */}
+//                     </TableCell>
+//                   </TableRow>
+//                 );
+//               })
+//             )}
+//             {emptyRows > 0 && (
+//               <TableRow style={{ height: 53 * emptyRows }}>
+//                 <TableCell colSpan={headCells.length} />
+//               </TableRow>
+//             )}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//       <TablePagination
+//         style={{ fontSize: '1rem', fontWeight: 'bold', marginTop: '10px' }}
+//         rowsPerPageOptions={[5, 10, 25]}
+//         component="div"
+//         count={totalPages * rowsPerPage} // Assuming totalRows is not available from the API
+//         rowsPerPage={rowsPerPage}
+//         page={page}
+//         onPageChange={handleChangePage}
+//         onRowsPerPageChange={handleChangeRowsPerPage}
+//       />
+//     </Paper>
+//   );
+// }
+

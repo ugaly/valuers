@@ -222,6 +222,12 @@ export default function SubjectsTable() {
         setOpenConfirm(false);
     };
 
+    const [openSubject, setOpenSubject] = React.useState(false);
+
+    const handleCloseSubject = () => {
+        setOpenSubject(false);
+    }
+
 
     return (
         <Paper>
@@ -241,7 +247,7 @@ export default function SubjectsTable() {
                         <RefreshIcon />
                     </IconButton>
                     {loading && <CircularProgress size={24} />}
-                    <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+                    <Button onClick={() => setOpenSubject(true)} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
                         Add Subject
                     </Button>
                 </div>
@@ -282,54 +288,54 @@ export default function SubjectsTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-    {filteredRows.length > 0 ? (
-        filteredRows
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `table-checkbox-${index}`;
+                        {filteredRows.length > 0 ? (
+                            filteredRows
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                    const isItemSelected = isSelected(row.id);
+                                    const labelId = `table-checkbox-${index}`;
 
-                return (
-                    <TableRow
-                        key={row.id}
-                        hover
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        selected={isItemSelected}
-                    >
-                        <TableCell padding="checkbox">
-                            <Checkbox
-                                color="primary"
-                                onClick={(event) => handleClick(event, row.id)}
-                                checked={isItemSelected}
-                                inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                        </TableCell>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
-                            {row.code}
-                        </TableCell>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell>
-                            {/* Your actions buttons */}
-                        </TableCell>
-                    </TableRow>
-                );
-            })
-    ) : (
-        <TableRow>
-            <TableCell colSpan={headCells.length + 1} align="center">
-                No data available
-            </TableCell>
-        </TableRow>
-    )}
-    {emptyRows > 0 && (
-        <TableRow style={{ height: 53 * emptyRows }}>
-            <TableCell colSpan={headCells.length + 1} />
-        </TableRow>
-    )}
-</TableBody>
+                                    return (
+                                        <TableRow
+                                            key={row.id}
+                                            hover
+                                            role="checkbox"
+                                            aria-checked={isItemSelected}
+                                            tabIndex={-1}
+                                            selected={isItemSelected}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    color="primary"
+                                                    onClick={(event) => handleClick(event, row.id)}
+                                                    checked={isItemSelected}
+                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                />
+                                            </TableCell>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
+                                                {row.code}
+                                            </TableCell>
+                                            <TableCell>{row.name}</TableCell>
+                                            <TableCell>
+                                                {/* Your actions buttons */}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={headCells.length + 1} align="center">
+                                    No data available
+                                </TableCell>
+                            </TableRow>
+                        )}
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 53 * emptyRows }}>
+                                <TableCell colSpan={headCells.length + 1} />
+                            </TableRow>
+                        )}
+                    </TableBody>
 
                 </Table>
             </TableContainer>
@@ -391,6 +397,43 @@ export default function SubjectsTable() {
                 <DialogActions>
                     <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Disagree</Button>
                     <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
+                </DialogActions>
+            </Dialog>
+
+
+
+
+
+            <Dialog TransitionComponent={Transition} open={openSubject} onClose={handleCloseSubject} fullWidth maxWidth="md">
+                <DialogTitle>Add Suject</DialogTitle>
+                <DialogContent>
+
+                    <TextField
+                        label="Code"
+                        variant="outlined"
+                        
+                        style={{ marginTop: '20px' }}
+                       
+                        fullWidth
+                    //value={remark}
+                    // onChange={handleRemarkChange}
+                    />
+
+
+                    <TextField
+                        label="Name"
+                        variant="outlined"
+                       
+                        style={{ marginTop: '20px' }}
+                       
+                        fullWidth
+                    //value={remark}
+                    // onChange={handleRemarkChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseSubject}>Cancel</Button>
+                    <Button onClick={handleCloseSubject} variant="contained" color="primary">Add</Button>
                 </DialogActions>
             </Dialog>
         </Paper>

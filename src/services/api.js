@@ -1,6 +1,6 @@
 import axios from "axios";
 
- const base_url = 'http://154.118.225.81:8000/api/v1/'
+ const base_url = 'http://10.2.81.12:8000/api/v1/'
 
 
 export default class API {

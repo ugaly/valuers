@@ -72,7 +72,6 @@ function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, Bi
 
 const headCells = [
   { id: 'counter', label: '#' },
-  { id: 'last_time', label: 'last_time' },
   { id: 'name', label: 'name' },
 
 ];
@@ -236,6 +235,12 @@ export default function RegCatTable() {
     return formattedDateTime;
   }
 
+  const [openRegCategory, setOpenRegCategory] = React.useState(false);
+
+  const handleCloseRegCategory = () => {
+    setOpenRegCategory(false);
+  }
+
   return (
     <Paper>
       <Toolbar className="d-flex justify-content-between mt-3 pb-2">
@@ -254,7 +259,7 @@ export default function RegCatTable() {
             <RefreshIcon />
           </IconButton>
           {loading && <CircularProgress size={24} />}
-          <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+          <Button onClick={()=>setOpenRegCategory(true)} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
             Add RegCategory
           </Button>
         </div>
@@ -326,9 +331,6 @@ export default function RegCatTable() {
               />
             </TableCell>
             <TableCell>{index + 1}</TableCell>
-            <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
-              {formatDateTime(row.last_time)}
-            </TableCell>
             <TableCell>{row.name}</TableCell>
             <TableCell>
               <IconButton onClick={handleClick1}>
@@ -339,12 +341,12 @@ export default function RegCatTable() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>
+                {/* <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>
                   <ListItemIcon>
                     <VisibilityIcon fontSize="small" />
                   </ListItemIcon>
                   View
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
                   <ListItemIcon>
                     <EditIcon fontSize="small" />
@@ -433,6 +435,29 @@ export default function RegCatTable() {
           <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
         </DialogActions>
       </Dialog>
+
+
+
+      <Dialog TransitionComponent={Transition} open={openRegCategory} onClose={handleCloseRegCategory} fullWidth maxWidth="md">
+                <DialogTitle>Add Registration Category</DialogTitle>
+                <DialogContent>
+
+                    <TextField
+                        label="Name"
+                        variant="outlined"
+                       
+                        style={{ marginTop: '20px' }}
+                       
+                        fullWidth
+                    //value={remark}
+                    // onChange={handleRemarkChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseRegCategory}>Cancel</Button>
+                    <Button onClick={handleCloseRegCategory} variant="contained" color="primary">Add</Button>
+                </DialogActions>
+            </Dialog>
     </Paper>
   );
 }

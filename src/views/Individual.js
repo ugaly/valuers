@@ -10,6 +10,7 @@ import ExamsResultsTable from '../tables/sub-individual/ExamsResultsTable';
 import AcademicInfoTable from '../tables/sub-individual/AcademicInfoTable';
 import RegInfo from '../tables/sub-individual/RegInfo';
 import CppTable from '../tables/sub-individual/CppTable';
+import PaymentsTable from '../tables/sub-individual/PaymentsTable';
 import RemarkTable from '../tables/sub-individual/RemarkTable';
 import Certificate from '../tables/sub-individual/Certificates';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -70,6 +71,7 @@ const Individual = () => {
                     <Tab value="Academic Info" label="Academic Info" />
                     <Tab value="CPD" label="CPD" />
                     <Tab value="Certificates" label="Certificates" />
+                    <Tab value="Payments" label="Payments" />
                     <Tab value="Remarks" label="Remarks" />
                   </Tabs>
                 </CardHeader>
@@ -79,6 +81,7 @@ const Individual = () => {
                   {activeTab === 'Academic Info' && <AcademicInfoTable data={data}/>}
                   {activeTab === 'CPD' && <CppTable data={data}/>}
                   {activeTab === 'Certificates' && <Certificate data={data}/>}
+                  {activeTab === 'Payments' && <PaymentsTable data={data}/>}
                   {activeTab === 'Remarks' && <RemarkTable data={data}/>}
                 </CardBody>
               </Card>

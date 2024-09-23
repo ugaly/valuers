@@ -253,6 +253,7 @@ import { useDropzone } from 'react-dropzone';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 const ExamsResultsTable = ({ data }) => {
+    console.log('see id',data);
     const [searchText, setSearchText] = useState('');
     const [loading, setLoading] = useState(false);
     const [examsResults, setExamsResults] = useState([]);
@@ -264,7 +265,7 @@ const ExamsResultsTable = ({ data }) => {
         setLoading(true);
         AuthService.getExamResults(data.id)
             .then((response) => {
-                console.log(response.data);
+                console.log('resilts', response.data);
                 setExamsResults(response.data.content);
             })
             .catch((error) => {
@@ -273,7 +274,7 @@ const ExamsResultsTable = ({ data }) => {
             .finally(() => {
                 setLoading(false);
             });
-    }, [data.regnNo]);
+    }, [data.id]);
 
     const handleSearchChange = (event) => {
         setSearchText(event.target.value);
@@ -300,9 +301,9 @@ const ExamsResultsTable = ({ data }) => {
         setOpenModal(false);
     };
 
-    const filteredResults = examsResults.filter((result) =>
-        result.dateOfExam.toLowerCase().includes(searchText.toLowerCase())
-    );
+    // const filteredResults = examsResults.filter((result) =>
+    //     result.dateOfExam.toLowerCase().includes(searchText.toLowerCase())
+    // );
 
     const { getRootProps, getInputProps } = useDropzone({ onDrop: handleFileUpload });
 
@@ -310,13 +311,13 @@ const ExamsResultsTable = ({ data }) => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <div style={{ width: '50%' }}>
-                    <TextField
+                    {/* <TextField
                         label="Search"
                         variant="outlined"
                         value={searchText}
                         onChange={handleSearchChange}
                         fullWidth
-                    />
+                    /> */}
                 </div>
                 <div className="d-flex align-items-center">
                     <IconButton onClick={handleButtonClick} color="primary" size="large" disabled={loading}>
@@ -338,20 +339,20 @@ const ExamsResultsTable = ({ data }) => {
                 <Table aria-label="exams results table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Date Of Exam</TableCell>
-                            <TableCell>Date Of Approval</TableCell>
-                            <TableCell>Venue</TableCell>
+                            <TableCell>Code</TableCell>
+                            <TableCell>Name</TableCell>
+                            {/* <TableCell>Venue</TableCell> */}
                             <TableCell>Total Score</TableCell>
                             <TableCell>Grade</TableCell>
                             <TableCell>Remarks</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredResults.map((result, index) => (
+                        {examsResults.map((result, index) => (
                             <TableRow key={index}>
-                                <TableCell>{result.dateOfExam}</TableCell>
-                                <TableCell>{result.dateOfApproval}</TableCell>
-                                <TableCell>{result.venue}</TableCell>
+                                <TableCell>{result.code}</TableCell>
+                                <TableCell>{result.subjectName}</TableCell>
+                                {/* <TableCell>{result.venue}</TableCell> */}
                                 <TableCell>{result.totalScore}</TableCell>
                                 <TableCell>{result.grade}</TableCell>
                                 <TableCell>{result.remarks}</TableCell>

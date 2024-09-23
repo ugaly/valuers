@@ -204,13 +204,13 @@ const CppTable = ({ data }) => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <div style={{ width: '50%' }}>
-                    <TextField
+                    {/* <TextField
                         label="Search"
                         variant="outlined"
                         value={searchText}
                         onChange={handleSearchChange}
                         fullWidth
-                    />
+                    /> */}
                 </div>
                 <div className="d-flex align-items-center">
                     <IconButton onClick={handleButtonClick} color="primary" size="large" disabled={loading}>

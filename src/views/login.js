@@ -27,7 +27,7 @@ export function Login() {
         AuthService.login(loginObj).then((res)=>{
             console.log(res);
 
-            if(res.data.status===1){
+            if(res.data.success === true) {
                 var token = res.data.token;
                 const decoded = jwtDecode(token);
                 console.log(decoded);

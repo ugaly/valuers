@@ -72,7 +72,6 @@ function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, Bi
 
 const headCells = [
   { id: 'counter', label: '#' },
-  { id: 'last_time', label: 'last_time' },
   { id: 'name', label: 'name' },
   { id: 'version', label: 'version' },
   { id: 'billAmt', label: 'billAmt' },
@@ -225,6 +224,14 @@ export default function ParticularTable() {
   };
 
 
+  const [openParticular, setOpenParticular] = React.useState(false);
+
+  const handleCloseParticular = () => {
+    setOpenParticular(false);
+  }
+
+
+
   return (
     <Paper>
       <Toolbar className="d-flex justify-content-between mt-3 pb-2">
@@ -243,8 +250,8 @@ export default function ParticularTable() {
             <RefreshIcon />
           </IconButton>
           {loading && <CircularProgress size={24} />}
-          <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
-            Add Company
+          <Button onClick={()=>setOpenParticular(true)} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+            Add Partucular
           </Button>
         </div>
       </Toolbar>
@@ -284,84 +291,81 @@ export default function ParticularTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-  {filteredRows.length === 0 ? (
-    <TableRow>
-      <TableCell colSpan={8} align="center">
-        No data available
-      </TableCell>
-    </TableRow>
-  ) : (
-    filteredRows
-      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map((row, index) => {
-        const isItemSelected = isSelected(row.id);
-        const labelId = `enhanced-table-checkbox-${index}`;
+            {filteredRows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  No data available
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-        return (
-          <TableRow
-            key={row.id}
-            hover
-           
-            role="checkbox"
-            aria-checked={isItemSelected}
-            tabIndex={-1}
-            selected={isItemSelected}
-          >
-            <TableCell padding="checkbox">
-              <Checkbox
-                color="primary"
-                onClick={(event) => handleClick(event, row.id)}
-                checked={isItemSelected}
-                inputProps={{ 'aria-labelledby': labelId }}
-              />
-            </TableCell>
-            <TableCell>{index + 1}</TableCell>
-            <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
-              {formatDateTime(row.last_time)}
-            </TableCell>
-            <TableCell>{row.name}</TableCell>
-            <TableCell style={{ fontSize: '1rem' }}>{row.version}</TableCell>
-            <TableCell style={{ fontSize: '1rem', color: 'green' }}>{row.billAmt}</TableCell>
-            <TableCell style={{ fontSize: '1rem' }}>{row.currency}</TableCell>
-            <TableCell style={{ fontSize: '1rem' }}>
-              <IconButton onClick={handleClick1}>
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>
-                  <ListItemIcon>
-                    <VisibilityIcon fontSize="small" />
-                  </ListItemIcon>
-                  View
-                </MenuItem>
-                <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
-                  <ListItemIcon>
-                    <EditIcon fontSize="small" />
-                  </ListItemIcon>
-                  Edit
-                </MenuItem>
-                <MenuItem onClick={handleClickOpenConfirm}>
-                  <ListItemIcon>
-                    <DeleteIcon fontSize="small" />
-                  </ListItemIcon>
-                  Delete
-                </MenuItem>
-              </Menu>
-            </TableCell>
-          </TableRow>
-        );
-      })
-  )}
-  {emptyRows > 0 && (
-    <TableRow style={{ height: 53 * emptyRows }}>
-      <TableCell colSpan={8} />
-    </TableRow>
-  )}
-</TableBody>
+                  return (
+                    <TableRow
+                      key={row.id}
+                      hover
+
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          onClick={(event) => handleClick(event, row.id)}
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{row.name}</TableCell>
+                      <TableCell style={{ fontSize: '1rem' }}>{row.version}</TableCell>
+                      <TableCell style={{ fontSize: '1rem', color: 'green' }}>{row.billAmt}</TableCell>
+                      <TableCell style={{ fontSize: '1rem' }}>{row.currency}</TableCell>
+                      <TableCell style={{ fontSize: '1rem' }}>
+                        <IconButton onClick={handleClick1}>
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          anchorEl={anchorEl}
+                          open={Boolean(anchorEl)}
+                          onClose={handleClose}
+                        >
+                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClickOpen(); }}>
+                            <ListItemIcon>
+                              <VisibilityIcon fontSize="small" />
+                            </ListItemIcon>
+                            View
+                          </MenuItem>
+                          <MenuItem onClick={(e) => { e.stopPropagation(); handleClose(); }}>
+                            <ListItemIcon>
+                              <EditIcon fontSize="small" />
+                            </ListItemIcon>
+                            Edit
+                          </MenuItem>
+                          <MenuItem onClick={handleClickOpenConfirm}>
+                            <ListItemIcon>
+                              <DeleteIcon fontSize="small" />
+                            </ListItemIcon>
+                            Delete
+                          </MenuItem>
+                        </Menu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+            )}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 53 * emptyRows }}>
+                <TableCell colSpan={8} />
+              </TableRow>
+            )}
+          </TableBody>
 
         </Table>
       </TableContainer>
@@ -425,6 +429,68 @@ export default function ParticularTable() {
           <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
         </DialogActions>
       </Dialog>
+
+
+
+
+      <Dialog TransitionComponent={Transition} open={openParticular} onClose={handleCloseParticular} fullWidth maxWidth="md">
+        <DialogTitle>Add Particular</DialogTitle>
+        <DialogContent>
+
+          <TextField
+            label="Name"
+            variant="outlined"
+            type='number'
+            style={{ marginTop: '20px' }}
+
+            fullWidth
+          //value={remark}
+          // onChange={handleRemarkChange}
+          />
+
+
+          <TextField
+            label="Version"
+            variant="outlined"
+
+            style={{ marginTop: '20px' }}
+
+            fullWidth
+          //value={remark}
+          // onChange={handleRemarkChange}
+          />
+
+
+          <TextField
+            label="Bill Ammount"
+            variant="outlined"
+
+            style={{ marginTop: '20px' }}
+
+            fullWidth
+          //value={remark}
+          // onChange={handleRemarkChange}
+          />
+
+          <TextField
+          dissabled
+            label="Currency"
+            variant="outlined"
+            value={'TZS'}
+            style={{ marginTop: '20px' }}
+
+            fullWidth
+          //value={remark}
+          // onChange={handleRemarkChange}
+          />
+        </DialogContent>
+        <DialogActions style={{'marginRight': '20px'}}>
+          <Button onClick={handleCloseParticular}>Cancel</Button>
+          <Button onClick={handleCloseParticular} variant="contained" color="primary">Add</Button>
+        </DialogActions>
+      </Dialog>
+
+
     </Paper>
   );
 }

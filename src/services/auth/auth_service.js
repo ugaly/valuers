@@ -42,13 +42,27 @@ export default class AuthService {
 
 
     //----------------------------Registration------------------------
-    static getCompany() {
-        return API.ax.get('registration/read/list/companies').catch(e => console.log(e))
-    }
+    // static getCompany(page, pageSize) {
+    //     return API.ax.get(`registration/read/list/companies?page=${page}&pageSize=${pageSize}`)
+    //       .catch(e => console.log(e));
+    //   }
 
-    static getIndividual() {
-        return API.ax.get('registration/read/list/individual').catch(e => console.log(e))
-    }
+
+    static getCompany(page, pageSize) {
+        return API.ax.get(`registration/read/list/companies`)
+          .catch(e => console.log(e));
+      }
+      
+
+    // static getIndividual() {
+    //     return API.ax.get('registration/read/list/individual').catch(e => console.log(e))
+    // }
+
+    static getIndividual(pageNumber, pageSize) {
+        return API.ax.get(`registration/read/list/individual?page=${pageNumber}&size=${pageSize}`)
+          .catch(e => console.error("API error:", e));
+      }
+      
 
     static getRegistrationInfo(id) {
         return API.ax.get(`registration/read/info?individualId=${id}`).catch(e => console.log(e))

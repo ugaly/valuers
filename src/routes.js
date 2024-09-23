@@ -19,6 +19,7 @@ import Reconciliation from "./views/Reconciliation";
 import Subjects from "./views/Subjects";
 import RegCategory from "./views/RegCategory";
 import Cpp from "./views/Cpp"
+import Document from "./views/Document";
 
 export default [
   {
@@ -101,6 +102,13 @@ export default [
     path: "/evrb/registration-category",
     layout: DefaultLayout,
     component: RegCategory
+  },
+
+  {
+    path: "/evrb/documents",
+    exact: true,
+    layout: DefaultLayout,
+    component: Document 
   },
   
   // {

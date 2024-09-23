@@ -72,7 +72,6 @@ function createData(id, billid, pyrName, pyrCellNum, payCbtrNum, CreatedTime, Bi
 
 const headCells = [
   { id: 'counter', label: '#' },
-  { id: 'last_time', label: 'last_time' },
   { id: 'noOfPoint', label: 'noOfPoint' },
   { id: 'programmeSource', label: 'programmeSource' },
 
@@ -238,6 +237,12 @@ export default function CppTable() {
     return formattedDateTime;
   }
 
+  const [openCpd, setOpenCpd] = React.useState(false);
+
+  const handleCloseCpd = () => {
+    setOpenCpd(false);
+  }
+
 
   return (
     <Paper>
@@ -257,8 +262,8 @@ export default function CppTable() {
             <RefreshIcon />
           </IconButton>
           {loading && <CircularProgress size={24} />}
-          <Button variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
-            Add Cpp
+          <Button onClick={()=>setOpenCpd(true)} variant="contained" className="mx-2 btn-primary" style={{ textTransform: 'none', fontWeight: 'bold', fontSize: '18px' }}>
+            Add Cpd
           </Button>
         </div>
       </Toolbar>
@@ -330,9 +335,7 @@ export default function CppTable() {
                         />
                       </TableCell>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell style={{ fontSize: '1rem', color: 'blue' }} component="th" id={labelId} scope="row" padding="none">
-                        {formatDateTime(row.last_time)}
-                      </TableCell>
+                      
                       <TableCell>{row.noOfPoint}</TableCell>
                       <TableCell style={{ fontSize: '1rem' }}>{row.programmeSource}</TableCell>
                       <TableCell>
@@ -437,6 +440,41 @@ export default function CppTable() {
           <Button style={{ fontSize: '1rem' }} onClick={handleCloseConfirm}>Agree</Button>
         </DialogActions>
       </Dialog>
+
+
+
+      <Dialog TransitionComponent={Transition} open={openCpd} onClose={handleCloseCpd} fullWidth maxWidth="md">
+                <DialogTitle>Add Suject</DialogTitle>
+                <DialogContent>
+
+                    <TextField
+                        label="No of Point"
+                        variant="outlined"
+                        type='number'
+                        style={{ marginTop: '20px' }}
+                       
+                        fullWidth
+                    //value={remark}
+                    // onChange={handleRemarkChange}
+                    />
+
+
+                    <TextField
+                        label="Programme Source"
+                        variant="outlined"
+                       
+                        style={{ marginTop: '20px' }}
+                       
+                        fullWidth
+                    //value={remark}
+                    // onChange={handleRemarkChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseCpd}>Cancel</Button>
+                    <Button onClick={handleCloseCpd} variant="contained" color="primary">Add</Button>
+                </DialogActions>
+            </Dialog>
     </Paper>
   );
 }
